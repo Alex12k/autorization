@@ -1,5 +1,9 @@
 # PHP 8.4 Демонстрационный проект
 
+[![PHP Version](https://img.shields.io/badge/PHP-8.4-blue.svg)](https://php.net)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.x-blue.svg)](https://tailwindcss.com)
+
 Этот проект демонстрирует возможности PHP 8.4 с современным веб-интерфейсом, созданным с использованием Tailwind CSS.
 
 ## 🚀 Быстрый старт
