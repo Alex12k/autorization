@@ -1,0 +1,48 @@
+# База данных SQLite (можно включить в репозиторий для демо, но обычно исключают)
+database.sqlite
+*.sqlite
+*.db
+
+# Логи
+*.log
+error.log
+access.log
+
+# Временные файлы
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE файлы
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Composer (если будет добавлен)
+vendor/
+composer.lock
+
+# Конфигурационные файлы с паролями
+.env
+.env.local
+.env.production
+
+# Кэш
+cache/
+tmp/
+
+# Backup файлы
+*.bak
+*.backup
+
+# Системные файлы
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
