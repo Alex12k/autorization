@@ -17,7 +17,9 @@ addGlobalScript(url('templates/login/script.js'));
 
 // Отрисовка header
 renderHeader();
-
+?>
+<div class="open_login">Асинхронный вызов формы логина</div>
+<?php
 // Запуск роутера (загрузка контента страницы)
 route();
 
