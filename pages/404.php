@@ -2,7 +2,7 @@
 setPageTitle('404 - Страница не найдена');
 ?>
 
-<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4">
+<div class="min-h-screen authorization-ajax-container flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4">
     <div class="max-w-md w-full text-center">
         <!-- Иконка 404 -->
         <div class="mb-8">
@@ -33,12 +33,13 @@ setPageTitle('404 - Страница не найдена');
                     Перейти в Dashboard
                 </a>
             <?php else: ?>
-                <a href="/login" class="block w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors">
+                <a href="#" class="open_login block w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors cursor-pointer">
                     <i class="ri-login-box-line mr-2"></i>
                     Войти в систему
                 </a>
             <?php endif; ?>
         </div>
+        
 
         <!-- Дополнительная информация -->
         <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

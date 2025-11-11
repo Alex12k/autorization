@@ -22,6 +22,13 @@ function route(): void
     // Убираем GET параметры
     $request_uri = strtok($request_uri, '?');
     
+    // Убираем index.php из начала URI, если он там есть
+    if (strpos($request_uri, '/index.php') === 0) {
+        $request_uri = substr($request_uri, strlen('/index.php'));
+    } elseif (strpos($request_uri, 'index.php/') === 0) {
+        $request_uri = substr($request_uri, strlen('index.php/'));
+    }
+    
     // Убираем начальный и конечный слэш
     $request_uri = trim($request_uri, '/');
     
@@ -37,10 +44,10 @@ function route(): void
     $template_routes = [
         // Аутентификация
         'login' => ['file' => 'templates/login/login.php', 'function' => 'login'],
-        'logout' => ['file' => 'templates/logout.php', 'function' => 'logoutPage'],
+        'logout' => ['file' => 'templates/logout/logout.php', 'function' => 'logoutPage'],
         'register' => ['file' => 'templates/register/register.php', 'function' => 'register'],
-        'forgot-password' => ['file' => 'templates/forgot_password.php', 'function' => 'forgotPassword'],
-        'reset-password' => ['file' => 'templates/reset_password.php', 'function' => 'resetPassword'],
+        'forgot-password' => ['file' => 'templates/forgot-password/forgot_password.php', 'function' => 'forgotPassword'],
+        'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
         
         // Приватные страницы
         'dashboard' => ['file' => 'templates/dashboard.php', 'function' => 'dashboard'],

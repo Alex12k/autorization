@@ -69,17 +69,20 @@ setPageTitle('Проверка сессии');
                         Выйти
                     </a>
                 <?php else: ?>
-                    <a href="<?= url('login') ?>" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                    <a href="#" class="open_login bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors cursor-pointer">
                         <i class="ri-login-box-line mr-2"></i>
                         Войти
                     </a>
                     
-                    <a href="<?= url('register') ?>" class="bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors">
+                    <a href="#" class="open_register bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors cursor-pointer">
                         <i class="ri-user-add-line mr-2"></i>
                         Регистрация
                     </a>
                 <?php endif; ?>
             </div>
+            
+            <!-- Контейнер для асинхронной загрузки форм авторизации -->
+            <div class="authorization-ajax-container mt-8"></div>
 
             <!-- Инструкции -->
             <div class="mt-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

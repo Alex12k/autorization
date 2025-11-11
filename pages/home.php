@@ -1,6 +1,7 @@
 <?php
 setPageTitle('PHP 8.4 Демонстрация');
 ?>
+<div class="authorization-ajax-container">
     <div class="gradient-bg text-white py-8">
         <div class="container mx-auto px-4">
             <div class="text-center">
@@ -194,14 +195,17 @@ setPageTitle('PHP 8.4 Демонстрация');
                 <i class="ri-refresh-line mr-2"></i>
                 Обновить страницу
             </button>
-            <a href="<?= url('login') ?>" class="inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105">
+            <a href="#" class="open_login inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 cursor-pointer">
                 <i class="ri-login-box-line mr-2"></i>
                 Войти в систему
             </a>
-            <a href="<?= url('register') ?>" class="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
+            <a href="#" class="open_register inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 cursor-pointer">
                 <i class="ri-user-add-line mr-2"></i>
                 Регистрация
             </a>
         </div>
+        
+      
     </div>
+</div>
 
