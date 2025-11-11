@@ -18,6 +18,8 @@ if (!defined('SYSTEM_INITIALIZED')) {
 
 function login(): void
 {
+
+    
     // Если пользователь уже авторизован, перенаправляем на dashboard
     if (isAuthenticated()) {
         redirect('dashboard');

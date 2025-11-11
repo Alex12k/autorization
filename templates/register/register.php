@@ -3,6 +3,19 @@
  * Шаблон страницы register
  */
 
+// Загрузка зависимостей (если файл вызывается напрямую)
+if (!defined('SYSTEM_INITIALIZED')) {
+    require_once __DIR__ . '/../../config.php';
+    require_once __DIR__ . '/../../functions/functions.php';
+    require_once __DIR__ . '/../../functions/layout.php';
+    
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    define('SYSTEM_INITIALIZED', true);
+}
+
 function register(): void
 {
     // Если пользователь уже авторизован, перенаправляем на dashboard
@@ -227,4 +240,11 @@ function register(): void
         }
     </script>
     <?php
+}
+
+// Обработка прямого вызова файла (AJAX запрос)
+if (isset($_POST['action']) && $_POST['action'] === 'open_register') {
+    // Вызываем функцию register() для обработки
+    register();
+    exit;
 }

@@ -38,7 +38,7 @@ function route(): void
         // Аутентификация
         'login' => ['file' => 'templates/login/login.php', 'function' => 'login'],
         'logout' => ['file' => 'templates/logout.php', 'function' => 'logoutPage'],
-        'register' => ['file' => 'templates/register.php', 'function' => 'register'],
+        'register' => ['file' => 'templates/register/register.php', 'function' => 'register'],
         'forgot-password' => ['file' => 'templates/forgot_password.php', 'function' => 'forgotPassword'],
         'reset-password' => ['file' => 'templates/reset_password.php', 'function' => 'resetPassword'],
         
