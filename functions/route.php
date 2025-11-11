@@ -36,7 +36,7 @@ function route(): void
      */
     $template_routes = [
         // Аутентификация
-        'login' => ['file' => 'templates/login.php', 'function' => 'login'],
+        'login' => ['file' => 'templates/login/login.php', 'function' => 'login'],
         'logout' => ['file' => 'templates/logout.php', 'function' => 'logoutPage'],
         'register' => ['file' => 'templates/register.php', 'function' => 'register'],
         'forgot-password' => ['file' => 'templates/forgot_password.php', 'function' => 'forgotPassword'],
