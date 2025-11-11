@@ -3,10 +3,26 @@
  * Шаблон страницы login
  */
 
+// Загрузка зависимостей (если файл вызывается напрямую)
+if (!defined('SYSTEM_INITIALIZED')) {
+    require_once __DIR__ . '/../../config.php';
+    require_once __DIR__ . '/../../functions/functions.php';
+    require_once __DIR__ . '/../../functions/layout.php';
+    
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    define('SYSTEM_INITIALIZED', true);
+}
+
 function login(): void
 {
+    // Проверка AJAX запроса для открытия формы
+    $is_ajax_request = ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'open_login');
+    
     // Если пользователь уже авторизован, перенаправляем на dashboard
-    if (isAuthenticated()) {
+    if (isAuthenticated() && !$is_ajax_request) {
         redirect('dashboard');
         exit;
     }
@@ -44,7 +60,12 @@ function login(): void
 
     $csrf_token = generateCSRFToken();
 
-    setPageTitle('Вход в систему');
+    // Для AJAX запроса используем буферизацию вывода
+    if ($is_ajax_request) {
+        ob_start();
+    } else {
+        setPageTitle('Вход в систему');
+    }
     ?>
         <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
             <div class="max-w-md w-full space-y-8">
@@ -199,8 +220,18 @@ function login(): void
             }
         </script>
     <?php
+    
+    // Для AJAX запроса возвращаем только содержимое буфера
+    if ($is_ajax_request) {
+        $output = ob_get_clean();
+        echo $output;
+        exit;
+    }
 }
 
-if($_POST['action'] === 'open_login'){
+// Обработка прямого вызова файла (AJAX запрос)
+if ($_POST['action'] === 'open_login') {
+    // Вызываем функцию login() для обработки
     login();
+    exit;
 }
