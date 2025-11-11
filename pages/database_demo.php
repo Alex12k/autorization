@@ -1,13 +1,7 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PHP + PostgreSQL Демонстрация</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet">
-</head>
-<body class="bg-gray-50 min-h-screen">
+<?php
+setPageTitle('PHP + PostgreSQL Демонстрация');
+$footer_text = 'PHP 8.4 + PostgreSQL + Tailwind CSS';
+?>
     <div class="bg-gradient-to-r from-green-500 to-blue-600 text-white py-8">
         <div class="container mx-auto px-4">
             <div class="text-center">
@@ -185,7 +179,7 @@
 
             <!-- Кнопки навигации -->
             <div class="text-center mt-8 space-x-4">
-                <a href="index.php" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                <a href="<?= url() ?>" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
                     <i class="ri-home-line mr-2"></i>
                     Главная страница
                 </a>
@@ -197,13 +191,3 @@
         </div>
     </div>
 
-    <footer class="bg-gray-800 text-white py-6 mt-12">
-        <div class="container mx-auto px-4 text-center">
-            <p class="text-gray-300">
-                <i class="ri-heart-line text-red-500"></i>
-                PHP 8.4 + PostgreSQL + Tailwind CSS
-            </p>
-        </div>
-    </footer>
-</body>
-</html> 

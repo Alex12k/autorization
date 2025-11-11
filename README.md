@@ -36,8 +36,14 @@
 ├── register.php           # Страница регистрации
 ├── dashboard.php          # Панель управления для авторизованных пользователей
 ├── admin.php              # Админ панель для управления пользователями
+├── api.php                # API endpoint для AJAX операций
 ├── init_database.sql      # SQL скрипт для инициализации PostgreSQL
-└── README.md             # Этот файл
+├── database.sqlite        # SQLite база данных
+├── README.md              # Этот файл
+├── ADMIN_GUIDE.md         # Руководство для администраторов
+├── DEPLOYMENT.md          # Инструкции по развертыванию
+├── BRIEF_REPORT.md        # Краткий отчет о проекте
+└── LICENSE                # MIT лицензия
 ```
 
 ## 🎯 Возможности
