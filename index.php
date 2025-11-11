@@ -14,11 +14,13 @@ session_start();
 
 // Глобальные скрипты (загружаются на ВСЕХ страницах)
 addGlobalScript(url('templates/login/script.js'));
+addGlobalScript(url('templates/register/script.js'));
 
 // Отрисовка header
 renderHeader();
 ?>
 <div class="open_login">Асинхронный вызов формы логина</div>
+<div class="open_register">Асинхронный вызов формы регистрации</div>
 <div class="authorization-ajax-container"></div>
 <?php
 // Запуск роутера (загрузка контента страницы)
