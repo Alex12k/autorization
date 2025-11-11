@@ -9,6 +9,7 @@
  */
 $GLOBALS['page_title'] = 'PHP 8.4 Система';
 $GLOBALS['additional_styles'] = '';
+$GLOBALS['additional_scripts'] = [];
 $GLOBALS['footer_text'] = 'Создано с PHP 8.4 и Tailwind CSS';
 
 /**
@@ -27,6 +28,15 @@ function setPageTitle(string $title): void
 function addStyles(string $styles): void
 {
     $GLOBALS['additional_styles'] .= $styles;
+}
+
+/**
+ * Добавление JavaScript файла
+ * @param string $scriptUrl URL скрипта
+ */
+function addScript(string $scriptUrl): void
+{
+    $GLOBALS['additional_scripts'][] = $scriptUrl;
 }
 
 /**
@@ -83,6 +93,7 @@ function renderHeader(): void
 function renderFooter(): void
 {
     $footer_text = $GLOBALS['footer_text'] ?? 'Создано с PHP 8.4 и Tailwind CSS';
+    $additional_scripts = $GLOBALS['additional_scripts'] ?? [];
     ?>
     <footer class="bg-gray-800 text-white py-6 mt-12">
         <div class="container mx-auto px-4 text-center">
@@ -92,6 +103,13 @@ function renderFooter(): void
             </p>
         </div>
     </footer>
+    
+    <?php
+    // Подключение дополнительных скриптов перед закрытием </body>
+    foreach ($additional_scripts as $script) {
+        echo '<script src="' . htmlspecialchars($script) . '"></script>' . "\n    ";
+    }
+    ?>
 </body>
 </html>
 <?php
