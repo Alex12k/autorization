@@ -150,7 +150,7 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">База данных</h3>
                     </div>
                     <div class="space-y-3">
-                        <a href="database_demo.php" class="block bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors text-center">
+                        <a href="<?= url('database-demo') ?>" class="block bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors text-center">
                             <i class="ri-database-2-line mr-1"></i>
                             Демонстрация PostgreSQL
                         </a>

@@ -1,6 +1,6 @@
 <?php
 setPageTitle('PHP + PostgreSQL Демонстрация');
-$footer_text = 'PHP 8.4 + PostgreSQL + Tailwind CSS';
+setFooterText('PHP 8.4 + PostgreSQL + Tailwind CSS');
 ?>
     <div class="bg-gradient-to-r from-green-500 to-blue-600 text-white py-8">
         <div class="container mx-auto px-4">
