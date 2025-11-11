@@ -1,5 +1,7 @@
 # База данных SQLite (можно включить в репозиторий для демо, но обычно исключают)
 database.sqlite
+database/database.sqlite
+database/*.sqlite
 *.sqlite
 *.db
 
