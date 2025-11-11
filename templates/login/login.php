@@ -200,3 +200,7 @@ function login(): void
         </script>
     <?php
 }
+
+if($_POST['action'] === 'open_login'){
+    login();
+}
