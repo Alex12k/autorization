@@ -9,7 +9,8 @@
  */
 $GLOBALS['page_title'] = 'PHP 8.4 Система';
 $GLOBALS['additional_styles'] = '';
-$GLOBALS['additional_scripts'] = [];
+$GLOBALS['global_scripts'] = [];        // Скрипты для ВСЕХ страниц
+$GLOBALS['additional_scripts'] = [];    // Скрипты для конкретной страницы
 $GLOBALS['footer_text'] = 'Создано с PHP 8.4 и Tailwind CSS';
 
 /**
@@ -31,12 +32,21 @@ function addStyles(string $styles): void
 }
 
 /**
- * Добавление JavaScript файла
+ * Добавление JavaScript файла для конкретной страницы
  * @param string $scriptUrl URL скрипта
  */
 function addScript(string $scriptUrl): void
 {
     $GLOBALS['additional_scripts'][] = $scriptUrl;
+}
+
+/**
+ * Добавление глобального JavaScript файла (для всех страниц)
+ * @param string $scriptUrl URL скрипта
+ */
+function addGlobalScript(string $scriptUrl): void
+{
+    $GLOBALS['global_scripts'][] = $scriptUrl;
 }
 
 /**
@@ -93,6 +103,7 @@ function renderHeader(): void
 function renderFooter(): void
 {
     $footer_text = $GLOBALS['footer_text'] ?? 'Создано с PHP 8.4 и Tailwind CSS';
+    $global_scripts = $GLOBALS['global_scripts'] ?? [];
     $additional_scripts = $GLOBALS['additional_scripts'] ?? [];
     ?>
     <footer class="bg-gray-800 text-white py-6 mt-12">
@@ -105,7 +116,12 @@ function renderFooter(): void
     </footer>
     
     <?php
-    // Подключение дополнительных скриптов перед закрытием </body>
+    // 1. Глобальные скрипты (загружаются на ВСЕХ страницах)
+    foreach ($global_scripts as $script) {
+        echo '<script src="' . htmlspecialchars($script) . '"></script>' . "\n    ";
+    }
+    
+    // 2. Скрипты для конкретной страницы
     foreach ($additional_scripts as $script) {
         echo '<script src="' . htmlspecialchars($script) . '"></script>' . "\n    ";
     }

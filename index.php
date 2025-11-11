@@ -12,6 +12,9 @@ require_once 'functions/layout.php';
 
 session_start();
 
+// Глобальные скрипты (загружаются на ВСЕХ страницах)
+addGlobalScript(url('templates/login/script.js'));
+
 // Отрисовка header
 renderHeader();
 
