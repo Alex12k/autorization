@@ -11,10 +11,24 @@
  */
 function url(string $route = ''): string
 {
-    $base_url = rtrim(dirname($_SERVER['SCRIPT_NAME']), '/');
-    if ($base_url === '') {
-        $base_url = '';
+    // Всегда используем корень сайта для роутов
+    // Это работает независимо от того, откуда вызывается функция
+    $base_url = '';
+    
+    // Если проект в поддиректории, можно определить через SCRIPT_NAME
+    // Но для простоты используем корень
+    $script_name = $_SERVER['SCRIPT_NAME'] ?? '/index.php';
+    
+    // Если SCRIPT_NAME содержит index.php, используем его директорию
+    if (strpos($script_name, 'index.php') !== false) {
+        $base_url = rtrim(dirname($script_name), '/');
+        // Если получили '/', значит корень
+        if ($base_url === '/') {
+            $base_url = '';
+        }
     }
+    // Иначе (прямой доступ к файлу) - используем корень
+    // base_url остается пустым
     
     if (empty($route) || $route === 'home') {
         return $base_url . '/';
