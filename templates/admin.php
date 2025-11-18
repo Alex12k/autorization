@@ -40,7 +40,7 @@ function admin(): void
                             <span class="text-gray-700 font-medium"><?= htmlspecialchars(getCurrentUser()['username']) ?></span>
                         </div>
 
-                        <a href="<?= url('logout') ?>" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors inline-block">
+                        <a href="#" class="open_logout bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors inline-block cursor-pointer">
                             <i class="ri-logout-box-line mr-1"></i>
                             Выйти
                         </a>

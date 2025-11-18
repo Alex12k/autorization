@@ -45,9 +45,9 @@ function route(): void
         // Аутентификация
         'login' => ['file' => 'templates/login/login.php', 'function' => 'login'],
         // 'logout' => ['file' => 'templates/logout/logout.php', 'function' => 'logoutPage'],
-        'register' => ['file' => 'templates/register/register.php', 'function' => 'register'],
-        'forgot-password' => ['file' => 'templates/forgot-password/forgot_password.php', 'function' => 'forgotPassword'],
-        'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
+        // 'register' => ['file' => 'templates/register/register.php', 'function' => 'register'],
+        // 'forgot-password' => ['file' => 'templates/forgot-password/forgot_password.php', 'function' => 'forgotPassword'],
+         'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
         
         // Приватные страницы
         'dashboard' => ['file' => 'templates/dashboard.php', 'function' => 'dashboard'],
