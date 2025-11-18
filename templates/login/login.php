@@ -157,7 +157,7 @@ function login(): void
                                 <i class="ri-lock-line mr-1"></i>
                                 Пароль
                             </label>
-                            <a href="#" class="open_forgot-password text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer">
+                            <a href="/" class="open_forgot-password text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer">
                                 Забыли пароль?
                             </a>
                         </div>
@@ -264,3 +264,4 @@ if (isset($_POST['action'])) {
         exit;
     }
 }
+

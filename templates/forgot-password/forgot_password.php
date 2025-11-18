@@ -37,54 +37,34 @@ function forgotPassword(): void
     // Обработка отправки формы восстановления пароля
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'forgot-password') {
         $csrf_token = $_POST['csrf_token'] ?? '';
-        
-        // Проверяем, это AJAX запрос
-        $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-                  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-        $is_ajax = $is_ajax || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
+        $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
 
         if (!verifyCSRFToken($csrf_token)) {
             if ($is_ajax) {
                 header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Ошибка безопасности. Попробуйте еще раз.'
-                ]);
+                echo json_encode(['success' => false, 'error' => 'Ошибка безопасности. Попробуйте еще раз.']);
                 exit;
             }
             $reset_error = 'Ошибка безопасности. Попробуйте еще раз.';
         } else {
             $email = trim($_POST['email'] ?? '');
-
             $result = requestPasswordReset($email);
 
             if ($result['success']) {
-                // Если это AJAX запрос, возвращаем JSON
                 if ($is_ajax) {
                     header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => true,
-                        'message' => 'Ссылка для восстановления пароля отправлена на ваш email',
-                        'token' => $result['token'] ?? null,
-                        'email' => $result['email'] ?? null
-                    ]);
+                    echo json_encode(['success' => true, 'message' => 'Ссылка для восстановления пароля отправлена на ваш email', 'token' => $result['token'] ?? null, 'email' => $result['email'] ?? null]);
                     exit;
                 }
-                
                 $reset_success = true;
                 $reset_token = $result['token'] ?? null;
                 $reset_email = $result['email'] ?? null;
             } else {
-                // Если это AJAX запрос, возвращаем JSON с ошибкой
                 if ($is_ajax) {
                     header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => false,
-                        'error' => $result['error']
-                    ]);
+                    echo json_encode(['success' => false, 'error' => $result['error']]);
                     exit;
                 }
-                
                 $reset_error = $result['error'];
             }
         }

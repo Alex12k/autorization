@@ -34,19 +34,12 @@ function register(): void
     // Обработка отправки формы регистрации
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') {
         $csrf_token = $_POST['csrf_token'] ?? '';
-        
-        // Проверяем, это AJAX запрос
-        $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-                  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-        $is_ajax = $is_ajax || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
+        $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
 
         if (!verifyCSRFToken($csrf_token)) {
             if ($is_ajax) {
                 header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Ошибка безопасности. Попробуйте еще раз.'
-                ]);
+                echo json_encode(['success' => false, 'error' => 'Ошибка безопасности. Попробуйте еще раз.']);
                 exit;
             }
             $register_error = 'Ошибка безопасности. Попробуйте еще раз.';
@@ -59,31 +52,20 @@ function register(): void
             $result = registerUser($username, $email, $password, $confirm_password);
 
             if ($result['success']) {
-                // Если это AJAX запрос, возвращаем JSON
                 if ($is_ajax) {
                     header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => true,
-                        'message' => 'Регистрация успешна! Теперь вы можете войти.'
-                    ]);
+                    echo json_encode(['success' => true, 'message' => 'Регистрация успешна! Теперь вы можете войти.']);
                     exit;
                 }
-                
-                // Иначе обычный редирект
                 $_SESSION['registration_success'] = 'Регистрация успешна! Теперь вы можете войти.';
                 redirect('login');
                 exit;
             } else {
-                // Если это AJAX запрос, возвращаем JSON с ошибкой
                 if ($is_ajax) {
                     header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => false,
-                        'error' => $result['error']
-                    ]);
+                    echo json_encode(['success' => false, 'error' => $result['error']]);
                     exit;
                 }
-                
                 $register_error = $result['error'];
             }
         }

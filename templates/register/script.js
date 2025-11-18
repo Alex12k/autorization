@@ -1,125 +1,51 @@
 /**
  * Модуль обработки регистрации
- * Один универсальный AJAX обработчик, который вызывает функцию register()
  */
 
-(function($) {
-    'use strict';
 
-    // Проверка наличия общего обработчика
-    if (typeof window.AuthAjaxHandler === 'undefined') {
-        console.error('AuthAjaxHandler не загружен! Убедитесь, что auth-ajax-handler.js загружен первым.');
-        return;
-    }
+// Вызов формы регистрации по клику
+$(document).on('click', '.open_register', function() {
+    $.post('/templates/register/register.php', {action: 'open_register'}, function(res) {
+        console.log(res);
+        $('.authorization-ajax-container').html(res);
+    });
+});
 
-    var handler = window.AuthAjaxHandler;
 
-    // Универсальный AJAX обработчик для регистрации
-    // Обрабатывает и загрузку формы, и отправку данных
-    function handleRegisterRequest(action, formData) {
-        var baseUrl = handler.getBaseUrl();
-        var url = baseUrl + '/templates/register/register.php';
+
+// Обработка отправки формы регистрации через AJAX
+$(document).on('submit', '.authorization-ajax-container form[data-action="register"]', function(e){
+    e.preventDefault();
+    
+    let form = $(this);
+    let formData = form.serialize() + '&ajax=1';
+    
+    $.post('/templates/register/register.php', formData, function(res) {
+        console.log('Ответ сервера:', res);
         
-        // Данные для отправки
-        var data = formData || { action: action };
-        
-        return $.ajax({
-            url: url,
-            type: 'POST',
-            data: data,
-            dataType: 'text',
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+        // jQuery автоматически парсит JSON, проверяем тип
+        if (typeof res === 'object' && res !== null) {
+            // Это уже объект (JSON распарсен автоматически)
+            if (res.success) {
+                // Показываем сообщение об успехе
+                window.AuthAjaxHandler.showSuccess(form, res.message || 'Регистрация успешна! Теперь вы можете войти.');
+                
+                // Очищаем форму
+                form[0].reset();
+                
+                // Загружаем форму логина через небольшую задержку
+                setTimeout(function() {
+                    $('.open_login').trigger('click');
+                }, 1500);
+            } else {
+                // Ошибка - показываем сообщение
+                window.AuthAjaxHandler.showError(form, res.error || 'Ошибка регистрации');
             }
-        });
-    }
-
-    // Вызов формы регистрации по клику
-    $(document).on('click', '.open_register', function(e){
-        e.preventDefault();
-        
-        handleRegisterRequest('open_register')
-            .done(function(response) {
-                var htmlResponse = typeof response === 'string' ? response : String(response);
-                handler.getContainer().html(htmlResponse.trim());
-            })
-            .fail(function(xhr, status, error) {
-                console.error('Ошибка загрузки формы регистрации:', error);
-                handler.getContainer().html(
-                    '<div class="p-4 bg-red-50 border border-red-200 rounded-lg">' +
-                    'Ошибка загрузки формы. Попробуйте обновить страницу.' +
-                    '</div>'
-                );
-            });
+        } else {
+            // Это строка (HTML) - обновляем контейнер
+            $('.authorization-ajax-container').html(res);
+        }
     });
+});
 
-    // Обработка отправки формы регистрации через AJAX
-    $(document).on('submit', '.authorization-ajax-container form[data-action="register"]', function(e){
-        e.preventDefault();
-        
-        var form = $(this);
-        var submitButton = form.find('button[type="submit"]');
-        var formData = form.serialize() + '&ajax=1';
-        
-        console.log('Отправка формы регистрации:', formData);
-        
-        // Показываем индикатор загрузки
-        handler.showLoading(submitButton);
-        
-        // Отправляем данные через универсальный обработчик
-        handleRegisterRequest('register', formData)
-            .done(function(response, textStatus, xhr) {
-                handler.hideLoading(submitButton);
-                
-                console.log('Ответ сервера (регистрация):', response);
-                
-                // Проверяем тип ответа
-                var contentType = xhr.getResponseHeader('Content-Type') || '';
-                var isJson = contentType.indexOf('application/json') !== -1;
-                
-                // Пытаемся распарсить JSON ответ
-                if (isJson || (typeof response === 'string' && response.trim().startsWith('{'))) {
-                    try {
-                        var data = JSON.parse(response);
-                        console.log('Распарсенный JSON (регистрация):', data);
-                        
-                        if (data.success) {
-                            // Показываем сообщение об успехе
-                            handler.showSuccess(form, data.message || 'Регистрация успешна! Теперь вы можете войти.');
-                            
-                            // Очищаем форму
-                            form[0].reset();
-                            
-                            // Загружаем форму логина через небольшую задержку
-                            setTimeout(function() {
-                                $('.open_login').trigger('click');
-                            }, 1500);
-                        } else {
-                            // Показываем ошибку
-                            console.error('Ошибка регистрации:', data.error);
-                            handler.showError(form, data.error || 'Ошибка регистрации');
-                        }
-                    } catch(e) {
-                        console.error('Ошибка парсинга JSON (регистрация):', e, 'Ответ:', response);
-                        handler.getContainer().html(response.trim());
-                    }
-                } else {
-                    // HTML ответ - обновляем контейнер
-                    handler.getContainer().html(response.trim());
-                }
-            })
-            .fail(function(xhr, status, error) {
-                handler.hideLoading(submitButton);
-                console.error('Ошибка AJAX (регистрация):', {
-                    status: status,
-                    error: error,
-                    responseText: xhr.responseText,
-                    statusCode: xhr.status
-                });
-                handler.showError(form, 'Ошибка соединения. Попробуйте еще раз.');
-            });
-    });
-
-    console.log('Register module initialized');
-
-})(jQuery);
+console.log('Register module initialized');

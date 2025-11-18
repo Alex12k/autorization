@@ -33,7 +33,7 @@ setPageTitle('404 - Страница не найдена');
                     Перейти в Dashboard
                 </a>
             <?php else: ?>
-                <a href="#" class="open_login block w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors cursor-pointer">
+                <a href="/" class="open_login block w-full bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:bg-gray-300 transition-colors cursor-pointer">
                     <i class="ri-login-box-line mr-2"></i>
                     Войти в систему
                 </a>

@@ -195,7 +195,7 @@ setPageTitle('PHP 8.4 Демонстрация');
                 <i class="ri-refresh-line mr-2"></i>
                 Обновить страницу
             </button>
-            <a href="#" class="open_login inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 cursor-pointer">
+            <a href="/" class="open_login inline-block bg-gradient-to-r from-green-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 cursor-pointer">
                 <i class="ri-login-box-line mr-2"></i>
                 Войти в систему
             </a>

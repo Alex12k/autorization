@@ -29,7 +29,7 @@ function resetPassword(): void
         exit;
     }
 
-    $token = $_GET['token'] ?? '';
+    $token = $_GET['token'] ?? $_POST['token'] ?? '';
     $reset_success = false;
     $reset_error = null;
     $token_validation = null;
@@ -48,20 +48,13 @@ function resetPassword(): void
     // Обработка отправки формы сброса пароля
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'reset-password') {
         $csrf_token = $_POST['csrf_token'] ?? '';
-        $token = $_POST['token'] ?? '';
-        
-        // Проверяем, это AJAX запрос
-        $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-                  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-        $is_ajax = $is_ajax || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
+        $token = $_POST['token'] ?? $token;
+        $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
 
         if (!verifyCSRFToken($csrf_token)) {
             if ($is_ajax) {
                 header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Ошибка безопасности. Попробуйте еще раз.'
-                ]);
+                echo json_encode(['success' => false, 'error' => 'Ошибка безопасности. Попробуйте еще раз.']);
                 exit;
             }
             $reset_error = 'Ошибка безопасности. Попробуйте еще раз.';
@@ -72,30 +65,19 @@ function resetPassword(): void
             $result = resetPasswordWithToken($token, $new_password, $confirm_password);
 
             if ($result['success']) {
-                // Если это AJAX запрос, возвращаем JSON
                 if ($is_ajax) {
                     header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => true,
-                        'message' => 'Пароль успешно изменен! Теперь вы можете войти в систему.'
-                    ]);
+                    echo json_encode(['success' => true, 'message' => 'Пароль успешно изменен! Теперь вы можете войти в систему.']);
                     exit;
                 }
-                
                 $reset_success = true;
             } else {
-                // Если это AJAX запрос, возвращаем JSON с ошибкой
                 if ($is_ajax) {
                     header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => false,
-                        'error' => $result['error']
-                    ]);
+                    echo json_encode(['success' => false, 'error' => $result['error']]);
                     exit;
                 }
-                
                 $reset_error = $result['error'];
-                // Переvalidate token в случае ошибки
                 if (!empty($token)) {
                     $token_validation = validateResetToken($token);
                 }
@@ -140,7 +122,7 @@ function resetPassword(): void
                         </p>
                     </div>
 
-                    <a href="#" class="open_login block w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 text-center cursor-pointer">
+                    <a href="/" class="open_login block w-full bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 text-center cursor-pointer">
                         <i class="ri-login-box-line mr-2"></i>
                         Войти в систему
                     </a>
