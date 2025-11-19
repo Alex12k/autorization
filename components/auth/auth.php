@@ -8,6 +8,6 @@ if (isAuthenticated()) {
 
 // Загружаем модуль логина и вызываем функцию login()
 // Компонент login() отвечает только за отображение формы и обработку входа
-require_once __DIR__ . '/../components/auth/login/login.php';
+require_once __DIR__ . '/login/login.php';
 login();
 

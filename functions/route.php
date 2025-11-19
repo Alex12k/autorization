@@ -32,10 +32,8 @@ function route(): void
     // Убираем начальный и конечный слэш
     $request_uri = trim($request_uri, '/');
     
-    // Если пустой URI, это точка входа (auth)
-    if (empty($request_uri)) {
-        $request_uri = 'auth';
-    }
+    // Пустой URI обрабатывается в index.php напрямую
+    // Здесь он не должен обрабатываться
     
     /**
      * Карта роутов для template функций (система авторизации)
@@ -59,8 +57,8 @@ function route(): void
      * Ключ - URI роута, Значение - путь к файлу
      */
     $page_routes = [
-        // Точка входа приложения
-        'auth' => 'pages/auth.php',
+        // Точка входа приложения (если нужен прямой доступ к auth)
+        'auth' => 'components/auth/auth.php',
         
         // API
         'api' => 'api.php',
