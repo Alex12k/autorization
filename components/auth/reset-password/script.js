@@ -148,7 +148,7 @@ $(document).ready(function() {
     if (token && $('.authorization-ajax-container').length) {
         // Автоматически загружаем форму сброса пароля
         let data = { action: 'open_reset-password', token: token, ajax: '1' };
-        $.post('/templates/reset-password/ajax/ajax.php', data, function(res) {
+        $.post('/components/auth/reset-password/ajax/ajax.php', data, function(res) {
             console.log('Автоматическая загрузка формы reset-password');
             $('.authorization-ajax-container').html(res);
             // Инициализируем обработчики после загрузки формы
@@ -166,7 +166,7 @@ $(document).on('click', '.open_reset-password', function() {
         data.token = token;
     }
     
-    $.post('/templates/reset-password/ajax/ajax.php', data, function(res) {
+    $.post('/components/auth/reset-password/ajax/ajax.php', data, function(res) {
         console.log(res);
         $('.authorization-ajax-container').html(res);
         // Инициализируем обработчики после загрузки формы
@@ -185,7 +185,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="reset-
     let form = $(this);
     let formData = form.serialize() + '&ajax=1';
     
-    $.post('/templates/reset-password/ajax/ajax.php', formData, function(res) {
+    $.post('/components/auth/reset-password/ajax/ajax.php', formData, function(res) {
         console.log('Ответ сервера:', res);
         
         // jQuery автоматически парсит JSON, проверяем тип

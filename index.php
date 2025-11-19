@@ -16,11 +16,11 @@ session_start();
 // Глобальные скрипты (загружаются на ВСЕХ страницах)
 // Порядок важен: сначала общий обработчик, потом модули
 addGlobalScript(url('templates/auth-ajax-handler.js'));  // Общий обработчик (утилиты)
-addGlobalScript(url('templates/login/script.js'));      // Модуль логина
-addGlobalScript(url('templates/register/script.js'));    // Модуль регистрации
-addGlobalScript(url('templates/forgot-password/script.js'));  // Модуль восстановления пароля
-addGlobalScript(url('templates/reset-password/script.js'));    // Модуль сброса пароля
-addGlobalScript(url('templates/logout/script.js'));            // Модуль выхода из системы
+addGlobalScript(url('components/auth/login/script.js'));      // Модуль логина
+addGlobalScript(url('components/auth/register/script.js'));    // Модуль регистрации
+addGlobalScript(url('components/auth/forgot-password/script.js'));  // Модуль восстановления пароля
+addGlobalScript(url('components/auth/reset-password/script.js'));    // Модуль сброса пароля
+addGlobalScript(url('components/auth/logout/script.js'));            // Модуль выхода из системы
 
 // Отрисовка header
 renderHeader();

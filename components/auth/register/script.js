@@ -32,7 +32,7 @@ function togglePasswordRegister(inputId, iconId) {
 
 // Вызов формы регистрации по клику
 $(document).on('click', '.open_register', function() {
-    $.post('/templates/register/ajax/ajax.php', {action: 'open_register', ajax: '1'}, function(res) {
+    $.post('/components/auth/register/ajax/ajax.php', {action: 'open_register', ajax: '1'}, function(res) {
         console.log(res);
         $('.authorization-ajax-container').html(res);
     });
@@ -47,7 +47,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="regist
     let form = $(this);
     let formData = form.serialize() + '&ajax=1';
     
-    $.post('/templates/register/ajax/ajax.php', formData, function(res) {
+    $.post('/components/auth/register/ajax/ajax.php', formData, function(res) {
         console.log('Ответ сервера:', res);
         
         // jQuery автоматически парсит JSON, проверяем тип

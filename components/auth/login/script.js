@@ -25,7 +25,7 @@ function togglePassword(inputId, iconId) {
 $(document).on('click', '.open_login', function(e) {
     e.preventDefault();
     console.log('open_login');
-    $.post('/templates/login/ajax/ajax.php', {action: 'open_login', ajax: '1'}, function(res) {
+    $.post('/components/auth/login/ajax/ajax.php', {action: 'open_login', ajax: '1'}, function(res) {
         console.log(res);
         $('.authorization-ajax-container').html(res);
     });
@@ -42,7 +42,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="login"
     let form = $(this);
     let formData = form.serialize() + '&ajax=1';
     
-    $.post('/templates/login/ajax/ajax.php', formData, function(res) {
+    $.post('/components/auth/login/ajax/ajax.php', formData, function(res) {
         console.log('Ответ сервера:', res);
         
         // jQuery автоматически парсит JSON, проверяем тип

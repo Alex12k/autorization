@@ -6,7 +6,7 @@
 // Вызов формы восстановления пароля по клику
 $(document).on('click', '.open_forgot-password, .open_forgot_password', function(e) {
     e.preventDefault();
-    $.post('/templates/forgot-password/ajax/ajax.php', {action: 'open_forgot-password', ajax: '1'}, function(res) {
+    $.post('/components/auth/forgot-password/ajax/ajax.php', {action: 'open_forgot-password', ajax: '1'}, function(res) {
         console.log(res);
         $('.authorization-ajax-container').html(res);
     });
@@ -21,7 +21,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="forgot
     let form = $(this);
     let formData = form.serialize() + '&ajax=1';
     
-    $.post('/templates/forgot-password/ajax/ajax.php', formData, function(res) {
+    $.post('/components/auth/forgot-password/ajax/ajax.php', formData, function(res) {
         console.log('Ответ сервера:', res);
         
         // jQuery автоматически парсит JSON, проверяем тип
