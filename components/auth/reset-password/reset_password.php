@@ -8,7 +8,6 @@
 if (!defined('SYSTEM_INITIALIZED')) {
     require_once __DIR__ . '/../config.php';
     require_once __DIR__ . '/../functions.php';
-    require_once __DIR__ . '/../../functions/layout.php';
     
     if (session_status() === PHP_SESSION_NONE) {
         session_start();
@@ -41,7 +40,6 @@ function resetPassword(): void
 
     // Генерация CSRF токена для формы
     $csrf_token = generateCSRFToken();
-    setPageTitle('Сброс пароля');
     
     // Отображение формы сброса пароля
     ?>

@@ -1,5 +1,4 @@
 <?php
-setPageTitle('404 - Страница не найдена');
 ?>
 
 <div class="min-h-screen authorization-ajax-container flex items-center justify-center bg-gradient-to-br from-purple-50 to-blue-50 px-4">

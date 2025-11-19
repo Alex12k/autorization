@@ -15,8 +15,6 @@ function dashboard(): void
     $login_time = $_SESSION['login_time'] ?? time();
     $session_duration = time() - $login_time;
 
-    setPageTitle('Панель управления');
-    setFooterText('Система аутентификации PHP 8.4');
     ?>
         <!-- Навигация -->
         <nav class="bg-white shadow-lg">

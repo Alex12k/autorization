@@ -14,8 +14,6 @@ function admin(): void
     $users = getAllUsers();
     $csrf_token = generateCSRFToken();
 
-    setPageTitle('Админ панель');
-    setFooterText('Админ панель PHP 8.4');
     ?>
         <!-- Навигация -->
         <nav class="bg-white shadow-lg">
@@ -548,15 +546,21 @@ function admin(): void
 
                     const data = await response.json();
 
+                    if (!response.ok) {
+                        showToast(data.error || `Ошибка сервера: ${response.status}`, 'error');
+                        return;
+                    }
+
                     if (data.success) {
                         showToast(data.message || 'Пользователь успешно обновлен', 'success');
                         updateUserRow({ id: userId, username, email, role });
-                        updateStatistics(); // Обновляем статистику если изменилась роль
+                        updateStatistics();
                         closeEditModal();
                     } else {
                         showToast(data.error || 'Ошибка при обновлении', 'error');
                     }
                 } catch (error) {
+                    console.error('Ошибка при обновлении пользователя:', error);
                     showToast('Ошибка сети. Попробуйте снова.', 'error');
                 } finally {
                     // Разблокируем кнопку
@@ -589,14 +593,19 @@ function admin(): void
 
                     const data = await response.json();
 
+                    if (!response.ok) {
+                        showToast(data.error || `Ошибка сервера: ${response.status}`, 'error');
+                        return;
+                    }
+
                     if (data.success) {
                         showToast(data.message || 'Пользователь успешно удален', 'success');
                         removeUserRow(userId);
-                        // Статистика обновится автоматически в removeUserRow
                     } else {
                         showToast(data.error || 'Ошибка при удалении', 'error');
                     }
                 } catch (error) {
+                    console.error('Ошибка при удалении пользователя:', error);
                     showToast('Ошибка сети. Попробуйте снова.', 'error');
                 }
             }

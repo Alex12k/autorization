@@ -176,7 +176,11 @@ function registerUser(string $username, string $email, string $password, string 
  */
 function isAuthenticated(): bool
 {
-    return isset($_SESSION['authenticated']) && $_SESSION['authenticated'] === true;
+    // Проверяем наличие флага авторизации и user_id для более надежной проверки
+    return isset($_SESSION['authenticated']) && 
+           $_SESSION['authenticated'] === true && 
+           isset($_SESSION['user_id']) && 
+           !empty($_SESSION['user_id']);
 }
 
 /**
@@ -226,7 +230,22 @@ function hasRole(string $role): bool
  */
 function logout(): void
 {
+    // Очищаем все данные сессии
+    $_SESSION = [];
+    
+    // Удаляем cookie сессии, если она существует
+    if (ini_get("session.use_cookies")) {
+        $params = session_get_cookie_params();
+        setcookie(session_name(), '', time() - 42000,
+            $params["path"], $params["domain"],
+            $params["secure"], $params["httponly"]
+        );
+    }
+    
+    // Уничтожаем сессию
     session_destroy();
+    
+    // Начинаем новую сессию для предотвращения ошибок
     session_start();
 }
 
@@ -718,4 +737,3 @@ function getPasswordResetStats(): array
         return ['active_tokens' => 0, 'used_last_24h' => 0, 'expired_tokens' => 0];
     }
 }
-

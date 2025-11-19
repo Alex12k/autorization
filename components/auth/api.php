@@ -4,12 +4,21 @@
  * Обрабатывает AJAX запросы и возвращает JSON
  */
 
-header('Content-Type: application/json');
+// Включаем буферизацию вывода для предотвращения лишнего вывода
+ob_start();
+
+// Отключаем вывод ошибок в браузер (только в лог)
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 
 // Инициализация системы
-require_once __DIR__ . '/config.php';
-require_once __DIR__ . '/functions.php';
-session_start();
+require_once __DIR__ . '/init.php';
+
+// Очищаем буфер перед установкой заголовков
+ob_clean();
+
+// Устанавливаем заголовок JSON
+header('Content-Type: application/json; charset=utf-8');
 
 // Проверяем, что запрос методом POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -46,7 +55,7 @@ switch ($action) {
     default:
         http_response_code(400);
         echo json_encode(['success' => false, 'error' => 'Неизвестное действие']);
-        break;
+        exit;
 }
 
 /**
@@ -62,18 +71,19 @@ function handleUpdateUser($data) {
     if (!verifyCSRFToken($csrf_token)) {
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Ошибка безопасности']);
-        return;
+        exit;
     }
     
     $result = updateUserByAdmin($user_id, $username, $email, $role);
     
     if ($result['success']) {
         http_response_code(200);
-        echo json_encode($result);
     } else {
         http_response_code(400);
-        echo json_encode($result);
     }
+    
+    echo json_encode($result);
+    exit;
 }
 
 /**
@@ -86,18 +96,19 @@ function handleDeleteUser($data) {
     if (!verifyCSRFToken($csrf_token)) {
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Ошибка безопасности']);
-        return;
+        exit;
     }
     
     $result = deleteUser($user_id);
     
     if ($result['success']) {
         http_response_code(200);
-        echo json_encode($result);
     } else {
         http_response_code(400);
-        echo json_encode($result);
     }
+    
+    echo json_encode($result);
+    exit;
 }
 
 /**
@@ -107,9 +118,10 @@ function handleGetUsers() {
     if (!hasRole('admin')) {
         http_response_code(403);
         echo json_encode(['success' => false, 'error' => 'Недостаточно прав']);
-        return;
+        exit;
     }
     
     $users = getAllUsers();
     echo json_encode(['success' => true, 'users' => $users]);
+    exit;
 }

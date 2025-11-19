@@ -32,8 +32,26 @@ function route(): void
     // Убираем начальный и конечный слэш
     $request_uri = trim($request_uri, '/');
     
-    // Пустой URI обрабатывается в index.php напрямую
-    // Здесь он не должен обрабатываться
+    // Если это корневой URL (точка входа)
+    if (empty($request_uri)) {
+        // Если это запрос после выхода (logout), очищаем параметр из URL
+        $is_logout = isset($_GET['logout']) && $_GET['logout'] === '1';
+        
+        if ($is_logout) {
+            // Убираем параметр logout из URL для чистоты
+            header('Location: ' . url(), true, 302);
+            exit;
+        }
+        
+        // Загружаем главную страницу (для всех пользователей, независимо от авторизации)
+        if (file_exists('pages/home.php')) {
+            require 'pages/home.php';
+        } else {
+            http_response_code(404);
+            echo '<h1>404 - Главная страница не найдена</h1>';
+        }
+        return;
+    }
     
     /**
      * Карта роутов для template функций (система авторизации)
@@ -57,6 +75,9 @@ function route(): void
      * Ключ - URI роута, Значение - путь к файлу
      */
     $page_routes = [
+        // Главная страница
+        'home' => 'pages/home.php',
+        
         // Точка входа приложения (если нужен прямой доступ к auth)
         'auth' => 'components/auth/auth.php',
         
@@ -66,6 +87,7 @@ function route(): void
         // Дополнительные
         'database-demo' => 'components/auth/database_demo.php',
         'check-session' => 'components/auth/check_session.php',
+        'clear-session' => 'pages/clear_session.php',
         '404' => 'pages/404.php',
     ];
     
