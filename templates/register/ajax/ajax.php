@@ -1,0 +1,108 @@
+<?php
+/**
+ * AJAX обработчик для компонента регистрации
+ * Обрабатывает все AJAX запросы, связанные с регистрацией пользователя
+ */
+
+// Загрузка зависимостей
+if (!defined('SYSTEM_INITIALIZED')) {
+    require_once __DIR__ . '/../../../config.php';
+    require_once __DIR__ . '/../../../functions/functions.php';
+    require_once __DIR__ . '/../../../functions/layout.php';
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    define('SYSTEM_INITIALIZED', true);
+}
+
+// Проверяем, что это AJAX запрос
+$is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
+          strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+$is_ajax = $is_ajax || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
+
+if (!$is_ajax) {
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'error' => 'Этот endpoint предназначен только для AJAX запросов'
+    ]);
+    exit;
+}
+
+// Получаем действие
+$action = $_POST['action'] ?? '';
+
+// Обработка запроса на открытие формы регистрации
+if ($action === 'open_register') {
+    // Для HTML ответа устанавливаем соответствующий заголовок
+    header('Content-Type: text/html; charset=utf-8');
+    
+    // Загружаем функцию register() для отображения формы
+    require_once __DIR__ . '/../register.php';
+    
+    // Временно очищаем POST данные, чтобы register() не обрабатывал их
+    $original_post = $_POST;
+    $_POST = [];
+    
+    // Захватываем вывод функции register()
+    ob_start();
+    register();
+    $form_html = ob_get_clean();
+    
+    // Восстанавливаем POST данные
+    $_POST = $original_post;
+    
+    // Возвращаем HTML формы
+    echo $form_html;
+    exit;
+}
+
+// Обработка отправки формы регистрации
+if ($action === 'register') {
+    // Устанавливаем заголовок для JSON ответов
+    header('Content-Type: application/json');
+    $csrf_token = $_POST['csrf_token'] ?? '';
+    
+    // Проверка CSRF токена
+    if (!verifyCSRFToken($csrf_token)) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Ошибка безопасности. Попробуйте еще раз.'
+        ]);
+        exit;
+    }
+    
+    // Получение данных формы
+    $username = trim($_POST['username'] ?? '');
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+    $confirm_password = $_POST['confirm_password'] ?? '';
+    
+    // Регистрация пользователя
+    $result = registerUser($username, $email, $password, $confirm_password);
+    
+    if ($result['success']) {
+        // Успешная регистрация
+        echo json_encode([
+            'success' => true,
+            'message' => 'Регистрация успешна! Теперь вы можете войти.'
+        ]);
+        exit;
+    } else {
+        // Ошибка регистрации
+        echo json_encode([
+            'success' => false,
+            'error' => $result['error']
+        ]);
+        exit;
+    }
+}
+
+// Неизвестное действие
+echo json_encode([
+    'success' => false,
+    'error' => 'Неизвестное действие'
+]);
+exit;
+
+

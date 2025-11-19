@@ -32,9 +32,9 @@ function route(): void
     // Убираем начальный и конечный слэш
     $request_uri = trim($request_uri, '/');
     
-    // Если пустой URI, это главная страница
+    // Если пустой URI, это точка входа (auth)
     if (empty($request_uri)) {
-        $request_uri = 'home';
+        $request_uri = 'auth';
     }
     
     /**
@@ -43,11 +43,11 @@ function route(): void
      */
     $template_routes = [
         // Аутентификация
-        'login' => ['file' => 'templates/login/login.php', 'function' => 'login'],
+        //'login' => ['file' => 'templates/login/login.php', 'function' => 'login'],
         // 'logout' => ['file' => 'templates/logout/logout.php', 'function' => 'logoutPage'],
         // 'register' => ['file' => 'templates/register/register.php', 'function' => 'register'],
         // 'forgot-password' => ['file' => 'templates/forgot-password/forgot_password.php', 'function' => 'forgotPassword'],
-         'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
+         //'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
         
         // Приватные страницы
         'dashboard' => ['file' => 'templates/dashboard.php', 'function' => 'dashboard'],
@@ -59,8 +59,8 @@ function route(): void
      * Ключ - URI роута, Значение - путь к файлу
      */
     $page_routes = [
-        // Главная
-        'home' => 'pages/home.php',
+        // Точка входа приложения
+        'auth' => 'pages/auth.php',
         
         // API
         'api' => 'api.php',

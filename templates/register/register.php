@@ -18,65 +18,19 @@ if (!defined('SYSTEM_INITIALIZED')) {
 }
 
 /**
- * Универсальная функция обработки регистрации
- * Обрабатывает как загрузку формы, так и отправку данных
+ * Функция отображения формы регистрации
+ * Отвечает только за отображение UI формы регистрации
+ * Обработка данных формы выполняется в ajax/ajax.php
  */
 function register(): void
 {
-    // Если пользователь уже авторизован, перенаправляем на dashboard
-    if (isAuthenticated()) {
-        redirect('dashboard');
-        exit;
-    }
-
-    $register_error = null;
-
-    // Обработка отправки формы регистрации
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'register') {
-        $csrf_token = $_POST['csrf_token'] ?? '';
-        $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
-
-        if (!verifyCSRFToken($csrf_token)) {
-            if ($is_ajax) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => 'Ошибка безопасности. Попробуйте еще раз.']);
-                exit;
-            }
-            $register_error = 'Ошибка безопасности. Попробуйте еще раз.';
-        } else {
-            $username = trim($_POST['username'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $password = $_POST['password'] ?? '';
-            $confirm_password = $_POST['confirm_password'] ?? '';
-
-            $result = registerUser($username, $email, $password, $confirm_password);
-
-            if ($result['success']) {
-                if ($is_ajax) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => true, 'message' => 'Регистрация успешна! Теперь вы можете войти.']);
-                    exit;
-                }
-                $_SESSION['registration_success'] = 'Регистрация успешна! Теперь вы можете войти.';
-                redirect('login');
-                exit;
-            } else {
-                if ($is_ajax) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => false, 'error' => $result['error']]);
-                    exit;
-                }
-                $register_error = $result['error'];
-            }
-        }
-    }
-
     // Генерация CSRF токена для формы
     $csrf_token = generateCSRFToken();
     setPageTitle('Регистрация');
     
     // Отображение формы регистрации
     ?>
+    <div class="authorization-ajax-container">
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <!-- Заголовок -->
@@ -90,15 +44,6 @@ function register(): void
 
             <!-- Форма регистрации -->
             <div class="bg-white rounded-lg shadow-xl p-8 form-focus transition-all duration-300">
-                <?php if (isset($register_error)): ?>
-                    <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="ri-error-warning-line text-red-500 mr-2"></i>
-                            <span class="text-red-700"><?= htmlspecialchars($register_error) ?></span>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
                 <form method="POST" class="space-y-6" data-action="register">
                     <input type="hidden" name="action" value="register">
                     <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
@@ -154,7 +99,7 @@ function register(): void
                             >
                             <button 
                                 type="button"
-                                onclick="togglePassword('password', 'toggle-password-icon')"
+                                onclick="togglePasswordRegister('password', 'toggle-password-icon')"
                                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                                 title="Показать/скрыть пароль"
                             >
@@ -180,7 +125,7 @@ function register(): void
                             >
                             <button 
                                 type="button"
-                                onclick="togglePassword('confirm_password', 'toggle-confirm-password-icon')"
+                                onclick="togglePasswordRegister('confirm_password', 'toggle-confirm-password-icon')"
                                 class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
                                 title="Показать/скрыть пароль"
                             >
@@ -242,43 +187,6 @@ function register(): void
             </div>
         </div>
     </div>
-
-    <script>
-        // Переключение видимости пароля
-        function togglePassword(inputId, iconId) {
-            const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('confirm_password');
-            const passwordIcon = document.getElementById('toggle-password-icon');
-            const confirmPasswordIcon = document.getElementById('toggle-confirm-password-icon');
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                confirmPasswordInput.type = 'text';
-                passwordIcon.classList.remove('ri-eye-line');
-                passwordIcon.classList.add('ri-eye-off-line');
-                confirmPasswordIcon.classList.remove('ri-eye-line');
-                confirmPasswordIcon.classList.add('ri-eye-off-line');
-            } else {
-                passwordInput.type = 'password';
-                confirmPasswordInput.type = 'password';
-                passwordIcon.classList.remove('ri-eye-off-line');
-                passwordIcon.classList.add('ri-eye-line');
-                confirmPasswordIcon.classList.remove('ri-eye-off-line');
-                confirmPasswordIcon.classList.add('ri-eye-line');
-            }
-        }
-    </script>
+    </div>
     <?php
-}
-
-// Единая точка входа для всех запросов
-// Определяем действие и вызываем универсальную функцию
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-    
-    // Загрузка формы или обработка данных - все через одну функцию
-    if ($action === 'open_register' || $action === 'register') {
-        register();
-        exit;
-    }
 }

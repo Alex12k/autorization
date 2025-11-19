@@ -30,7 +30,7 @@ function url(string $route = ''): string
     // Иначе (прямой доступ к файлу) - используем корень
     // base_url остается пустым
     
-    if (empty($route) || $route === 'home') {
+    if (empty($route) || $route === 'auth') {
         return $base_url . '/';
     }
     

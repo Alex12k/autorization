@@ -6,7 +6,7 @@
 // Вызов формы восстановления пароля по клику
 $(document).on('click', '.open_forgot-password, .open_forgot_password', function(e) {
     e.preventDefault();
-    $.post('/templates/forgot-password/forgot_password.php', {action: 'open_forgot-password'}, function(res) {
+    $.post('/templates/forgot-password/ajax/ajax.php', {action: 'open_forgot-password', ajax: '1'}, function(res) {
         console.log(res);
         $('.authorization-ajax-container').html(res);
     });
@@ -21,7 +21,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="forgot
     let form = $(this);
     let formData = form.serialize() + '&ajax=1';
     
-    $.post('/templates/forgot-password/forgot_password.php', formData, function(res) {
+    $.post('/templates/forgot-password/ajax/ajax.php', formData, function(res) {
         console.log('Ответ сервера:', res);
         
         // jQuery автоматически парсит JSON, проверяем тип
@@ -40,11 +40,11 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="forgot
                         '<p class="text-xs text-green-700 mb-3">' + (res.message || 'Ссылка для восстановления пароля отправлена на ваш email') + '</p>';
                     
                     if (res.token) {
-                        let resetUrl = window.location.origin + '/reset-password?token=' + res.token;
+                        let resetUrl = window.location.origin + '/?token=' + res.token;
                         successHtml += '<div class="bg-white rounded p-3 mb-3">' +
                             '<code class="text-xs break-all text-green-900">' + resetUrl + '</code>' +
                             '</div>' +
-                            '<a href="/reset-password?token=' + res.token + '" ' +
+                            '<a href="/?token=' + res.token + '" ' +
                             'class="block w-full bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition-colors text-center font-semibold">' +
                             '<i class="ri-key-line mr-2"></i>Сбросить пароль</a>';
                     }

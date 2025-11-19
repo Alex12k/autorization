@@ -18,64 +18,19 @@ if (!defined('SYSTEM_INITIALIZED')) {
 }
 
 /**
- * Универсальная функция обработки восстановления пароля
- * Обрабатывает как загрузку формы, так и отправку данных
+ * Функция отображения формы восстановления пароля
+ * Отвечает только за отображение UI формы восстановления пароля
+ * Обработка данных формы выполняется в ajax/ajax.php
  */
 function forgotPassword(): void
 {
-    // Если пользователь уже авторизован, перенаправляем на dashboard
-    if (isAuthenticated()) {
-        redirect('dashboard');
-        exit;
-    }
-
-    $reset_success = null;
-    $reset_error = null;
-    $reset_token = null;
-    $reset_email = null;
-
-    // Обработка отправки формы восстановления пароля
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'forgot-password') {
-        $csrf_token = $_POST['csrf_token'] ?? '';
-        $is_ajax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
-
-        if (!verifyCSRFToken($csrf_token)) {
-            if ($is_ajax) {
-                header('Content-Type: application/json');
-                echo json_encode(['success' => false, 'error' => 'Ошибка безопасности. Попробуйте еще раз.']);
-                exit;
-            }
-            $reset_error = 'Ошибка безопасности. Попробуйте еще раз.';
-        } else {
-            $email = trim($_POST['email'] ?? '');
-            $result = requestPasswordReset($email);
-
-            if ($result['success']) {
-                if ($is_ajax) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => true, 'message' => 'Ссылка для восстановления пароля отправлена на ваш email', 'token' => $result['token'] ?? null, 'email' => $result['email'] ?? null]);
-                    exit;
-                }
-                $reset_success = true;
-                $reset_token = $result['token'] ?? null;
-                $reset_email = $result['email'] ?? null;
-            } else {
-                if ($is_ajax) {
-                    header('Content-Type: application/json');
-                    echo json_encode(['success' => false, 'error' => $result['error']]);
-                    exit;
-                }
-                $reset_error = $result['error'];
-            }
-        }
-    }
-
     // Генерация CSRF токена для формы
     $csrf_token = generateCSRFToken();
     setPageTitle('Восстановление пароля');
     
     // Отображение формы восстановления пароля
     ?>
+    <div class="authorization-ajax-container">
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <!-- Заголовок -->
@@ -87,60 +42,9 @@ function forgotPassword(): void
                 <p class="text-gray-600">Введите email адрес вашей учетной записи</p>
             </div>
 
-            <?php if ($reset_success && $reset_token): ?>
-                <!-- Успешное создание токена (для демо целей показываем токен) -->
-                <div class="bg-white rounded-lg shadow-xl p-8">
-                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <div class="flex items-start">
-                            <i class="ri-check-line text-green-500 text-xl mr-2 mt-0.5"></i>
-                            <div>
-                                <span class="text-green-700 font-medium">Токен восстановления создан!</span>
-                                <p class="text-sm text-green-600 mt-1">
-                                    В реальной системе ссылка будет отправлена на <?= htmlspecialchars($reset_email) ?>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Демо: показываем ссылку для восстановления -->
-                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                        <h3 class="text-sm font-semibold text-blue-800 mb-2 flex items-center">
-                            <i class="ri-information-line mr-2"></i>
-                            Демо режим
-                        </h3>
-                        <p class="text-xs text-blue-700 mb-3">
-                            В production система отправит email со ссылкой. Для демонстрации используйте эту ссылку:
-                        </p>
-                        <div class="bg-white rounded p-3 mb-3">
-                            <code class="text-xs break-all text-blue-900">
-                                <?= htmlspecialchars($_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST']) ?><?= url('reset-password') ?>?token=<?= htmlspecialchars($reset_token) ?>
-                            </code>
-                        </div>
-                        <a href="<?= url('reset-password') ?>?token=<?= htmlspecialchars($reset_token) ?>" 
-                           class="block w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors text-center font-semibold">
-                            <i class="ri-key-line mr-2"></i>
-                            Сбросить пароль
-                        </a>
-                    </div>
-
-                    <div class="text-sm text-gray-600">
-                        <i class="ri-time-line mr-1"></i>
-                        Срок действия ссылки: 1 час
-                    </div>
-                </div>
-            <?php else: ?>
-                <!-- Форма запроса восстановления -->
-                <div class="bg-white rounded-lg shadow-xl p-8 form-focus transition-all duration-300">
-                    <?php if ($reset_error): ?>
-                        <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="ri-error-warning-line text-red-500 mr-2"></i>
-                                <span class="text-red-700"><?= htmlspecialchars($reset_error) ?></span>
-                            </div>
-                        </div>
-                    <?php endif; ?>
-
-                    <form method="POST" class="space-y-6" data-action="forgot-password">
+            <!-- Форма запроса восстановления -->
+            <div class="bg-white rounded-lg shadow-xl p-8 form-focus transition-all duration-300">
+                <form method="POST" class="space-y-6" data-action="forgot-password">
                         <input type="hidden" name="action" value="forgot-password">
                         <input type="hidden" name="csrf_token" value="<?= $csrf_token ?>">
 
@@ -214,7 +118,6 @@ function forgotPassword(): void
                         </p>
                     </div>
                 </div>
-            <?php endif; ?>
 
             <!-- Ссылка на главную -->
             <div class="text-center">
@@ -225,19 +128,7 @@ function forgotPassword(): void
             </div>
         </div>
     </div>
+    </div>
     <?php
-}
-
-// Единая точка входа для всех запросов
-// Определяем действие и вызываем универсальную функцию
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-    
-    // Загрузка формы или обработка данных - все через одну функцию
-    // Используем замену дефиса на подчеркивание для совместимости
-    if ($action === 'open_forgot-password' || $action === 'open_forgot_password' || $action === 'forgot-password') {
-        forgotPassword();
-        exit;
-    }
 }
 

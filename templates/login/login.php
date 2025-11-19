@@ -16,18 +16,12 @@ if (!defined('SYSTEM_INITIALIZED')) {
 }
 
 /**
- * Универсальная функция обработки логина
- * Обрабатывает как загрузку формы, так и отправку данных
+ * Функция отображения формы логина
+ * Отвечает только за отображение UI формы входа
+ * Обработка данных формы выполняется в ajax/ajax.php
  */
 function login(): void
 {
-    // Если пользователь уже авторизован, перенаправляем на dashboard
-    if (isAuthenticated()) {
-        redirect('dashboard');
-        exit;
-    }
-
-    $login_error = null;
     $registration_success = null;
 
     // Проверяем сообщение об успешной регистрации
@@ -36,68 +30,13 @@ function login(): void
         unset($_SESSION['registration_success']);
     }
 
-    // Обработка отправки формы логина
-    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'login') {
-        $csrf_token = $_POST['csrf_token'] ?? '';
-        
-        // Проверяем, это AJAX запрос
-        $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
-                  strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-        $is_ajax = $is_ajax || (isset($_POST['ajax']) && $_POST['ajax'] === '1');
-
-        if (!verifyCSRFToken($csrf_token)) {
-            if ($is_ajax) {
-                header('Content-Type: application/json');
-                echo json_encode([
-                    'success' => false,
-                    'error' => 'Ошибка безопасности. Попробуйте еще раз.'
-                ]);
-                exit;
-            }
-            $login_error = 'Ошибка безопасности. Попробуйте еще раз.';
-        } else {
-            $username = trim($_POST['username'] ?? '');
-            $password = $_POST['password'] ?? '';
-
-            $result = authenticateUser($username, $password);
-
-            if ($result['success']) {
-                // Если это AJAX запрос, возвращаем JSON
-                if ($is_ajax) {
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => true,
-                        'message' => 'Успешный вход в систему',
-                        'redirect' => url('dashboard')
-                    ]);
-                    exit;
-                }
-                
-                // Иначе обычный редирект
-                redirect('dashboard');
-                exit;
-            } else {
-                // Если это AJAX запрос, возвращаем JSON с ошибкой
-                if ($is_ajax) {
-                    header('Content-Type: application/json');
-                    echo json_encode([
-                        'success' => false,
-                        'error' => $result['error']
-                    ]);
-                    exit;
-                }
-                
-                $login_error = $result['error'];
-            }
-        }
-    }
-
     // Генерация CSRF токена для формы
     $csrf_token = generateCSRFToken();
     setPageTitle('Вход в систему');
     
     // Отображение формы логина
     ?>
+    <div class="authorization-ajax-container">
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full space-y-8">
             <!-- Заголовок -->
@@ -116,15 +55,6 @@ function login(): void
                         <div class="flex items-center">
                             <i class="ri-check-line text-green-500 mr-2"></i>
                             <span class="text-green-700"><?= htmlspecialchars($registration_success) ?></span>
-                        </div>
-                    </div>
-                <?php endif; ?>
-
-                <?php if ($login_error): ?>
-                    <div class="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
-                        <div class="flex items-center">
-                            <i class="ri-error-warning-line text-red-500 mr-2"></i>
-                            <span class="text-red-700"><?= htmlspecialchars($login_error) ?></span>
                         </div>
                     </div>
                 <?php endif; ?>
@@ -157,7 +87,7 @@ function login(): void
                                 <i class="ri-lock-line mr-1"></i>
                                 Пароль
                             </label>
-                            <a href="/" class="open_forgot-password text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer">
+                            <a href="#" class="open_forgot-password text-sm text-blue-600 hover:text-blue-700 font-medium cursor-pointer">
                                 Забыли пароль?
                             </a>
                         </div>
@@ -233,35 +163,6 @@ function login(): void
             </div>
         </div>
     </div>
-
-    <script>
-        function togglePassword(inputId, iconId) {
-            const passwordInput = document.getElementById(inputId);
-            const icon = document.getElementById(iconId);
-
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('ri-eye-line');
-                icon.classList.add('ri-eye-off-line');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('ri-eye-off-line');
-                icon.classList.add('ri-eye-line');
-            }
-        }
-    </script>
+    </div>
     <?php
 }
-
-// Единая точка входа для всех запросов
-// Определяем действие и вызываем универсальную функцию
-if (isset($_POST['action'])) {
-    $action = $_POST['action'];
-    
-    // Загрузка формы или обработка данных - все через одну функцию
-    if ($action === 'open_login' || $action === 'login') {
-        login();
-        exit;
-    }
-}
-

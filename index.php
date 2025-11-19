@@ -12,6 +12,7 @@ require_once 'functions/layout.php';
 
 session_start();
 
+
 // Глобальные скрипты (загружаются на ВСЕХ страницах)
 // Порядок важен: сначала общий обработчик, потом модули
 addGlobalScript(url('templates/auth-ajax-handler.js'));  // Общий обработчик (утилиты)

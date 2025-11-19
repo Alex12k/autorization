@@ -7,7 +7,7 @@
 $(document).on('click', '.open_logout', function(e) {
     e.preventDefault();
     
-    $.post('/templates/logout/logout.php', {action: 'logout', ajax: '1'}, function(res) {
+    $.post('/templates/logout/ajax/ajax.php', {action: 'logout', ajax: '1'}, function(res) {
         console.log('Ответ сервера:', res);
         
         // jQuery автоматически парсит JSON, проверяем тип
