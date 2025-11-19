@@ -61,7 +61,7 @@ function route(): void
         'auth' => 'components/auth/auth.php',
         
         // API
-        'api' => 'api.php',
+        'api' => 'components/auth/api.php',
         
         // Дополнительные
         'database-demo' => 'pages/database_demo.php',

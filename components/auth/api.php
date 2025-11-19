@@ -7,8 +7,8 @@
 header('Content-Type: application/json');
 
 // Инициализация системы
-require_once 'config.php';
-require_once 'functions/functions.php';
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../functions/functions.php';
 session_start();
 
 // Проверяем, что запрос методом POST

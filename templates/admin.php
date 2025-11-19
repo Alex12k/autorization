@@ -371,6 +371,7 @@ function admin(): void
             const currentUserId = <?= getCurrentUser()['id'] ?>;
             const currentUserRole = '<?= getCurrentUser()['role'] ?>';
             const csrfToken = '<?= $csrf_token ?>';
+            const apiUrl = '<?= url('api') ?>';
 
             // Toast уведомления
             function showToast(message, type = 'success') {
@@ -530,7 +531,7 @@ function admin(): void
                 saveBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-1"></i> Сохранение...';
 
                 try {
-                    const response = await fetch('api.php', {
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -574,7 +575,7 @@ function admin(): void
             // Удаление пользователя (AJAX)
             async function deleteUser(userId) {
                 try {
-                    const response = await fetch('api.php', {
+                    const response = await fetch(apiUrl, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
