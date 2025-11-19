@@ -42,7 +42,7 @@ php -S localhost:8000
   - `forgot-password/` - Восстановление пароля
   - `reset-password/` - Сброс пароля
   - `logout/` - Выход из системы
-- `templates/` - Шаблоны страниц
+- `components/auth/templates/` - Шаблоны страниц для авторизованных пользователей
   - `dashboard.php` - Панель управления пользователя
   - `admin.php` - Админ панель (только для админов)
 - `components/auth/config.php` - Конфигурация приложения

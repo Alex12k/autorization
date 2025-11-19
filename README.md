@@ -48,7 +48,7 @@
 │       ├── forgot-password/       # Восстановление пароля
 │       ├── reset-password/        # Сброс пароля
 │       └── logout/                # Выход из системы
-├── templates/
+├── components/auth/templates/     # Шаблоны для авторизованных пользователей
 │   ├── dashboard.php              # Панель управления
 │   └── admin.php                  # Админ панель
 ├── functions/                     # Системные функции

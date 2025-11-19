@@ -48,8 +48,8 @@ function route(): void
          //'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
         
         // Приватные страницы
-        'dashboard' => ['file' => 'templates/dashboard.php', 'function' => 'dashboard'],
-        'admin' => ['file' => 'templates/admin.php', 'function' => 'admin'],
+        'dashboard' => ['file' => 'components/auth/templates/dashboard.php', 'function' => 'dashboard'],
+        'admin' => ['file' => 'components/auth/templates/admin.php', 'function' => 'admin'],
     ];
     
     /**
