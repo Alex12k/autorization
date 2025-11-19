@@ -6,7 +6,7 @@
 
 // Загрузка зависимостей (если файл вызывается напрямую)
 if (!defined('SYSTEM_INITIALIZED')) {
-    require_once __DIR__ . '/../../config.php';
+    require_once __DIR__ . '/../config.php';
     require_once __DIR__ . '/../functions.php';
     require_once __DIR__ . '/../../functions/layout.php';
     

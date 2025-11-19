@@ -45,7 +45,7 @@ php -S localhost:8000
 - `templates/` - Шаблоны страниц
   - `dashboard.php` - Панель управления пользователя
   - `admin.php` - Админ панель (только для админов)
-- `config.php` - Конфигурация приложения
+- `components/auth/config.php` - Конфигурация приложения
 - `functions/` - Системные функции
 - `pages/` - Дополнительные страницы
 
@@ -53,7 +53,7 @@ php -S localhost:8000
 
 Проект автоматически создает SQLite базу данных при первом запуске. Для использования PostgreSQL:
 
-1. Измените `USE_POSTGRESQL` на `true` в `config.php`
+1. Измените `USE_POSTGRESQL` на `true` в `components/auth/config.php`
 2. Настройте параметры подключения к PostgreSQL
 3. Запустите `init_database.sql`
 

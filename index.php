@@ -5,7 +5,7 @@
  */
 
 // Инициализация системы
-require_once 'config.php';
+require_once 'components/auth/config.php';
 require_once 'components/auth/functions.php';
 require_once 'functions/route.php';
 require_once 'functions/layout.php';

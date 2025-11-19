@@ -51,10 +51,10 @@ SQL скрипт для ручного создания структуры БД:
 ### В коде проекта
 
 ```php
-// Подключение выполняется автоматически через config.php
-require_once 'database/config.php';
-require_once 'database/connection.php';
-require_once 'database/init.php';
+// Подключение выполняется автоматически через components/auth/config.php
+require_once 'components/auth/config.php';
+// или если вызывается из компонента auth:
+require_once __DIR__ . '/../config.php';
 
 // Получение соединения
 $pdo = getDatabaseConnection();
@@ -81,18 +81,18 @@ define('USE_POSTGRESQL', true);
 
 Для SQLite:
 ```bash
-rm database/database.sqlite
+rm components/auth/database/database.sqlite
 # БД пересоздастся автоматически при следующем запросе
 ```
 
 Для PostgreSQL:
 ```bash
-psql -U your_user -d php_auth_demo -f database/init_database.sql
+psql -U your_user -d php_auth_demo -f components/auth/database/init_database.sql
 ```
 
 ## Безопасность
 
-- `database.sqlite` добавлен в `.gitignore`
+- `components/auth/database/database.sqlite` добавлен в `.gitignore`
 - Пароли хешируются через `password_hash()`
 - Используются prepared statements для защиты от SQL injection
 - CSRF токены для защиты форм

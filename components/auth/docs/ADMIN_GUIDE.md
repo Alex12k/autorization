@@ -196,7 +196,7 @@ getAllUsers(): array
 **Сценарий 3: Случайно понизили всех админов**
 Если это произошло, восстановите админа через базу данных:
 ```bash
-sqlite3 database.sqlite "UPDATE users SET role = 'admin' WHERE username = 'admin';"
+sqlite3 components/auth/database/database.sqlite "UPDATE users SET role = 'admin' WHERE username = 'admin';"
 ```
 
 ---
