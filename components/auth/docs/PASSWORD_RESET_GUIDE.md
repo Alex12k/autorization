@@ -11,7 +11,7 @@
 1. **База данных**
    - Таблица `password_reset_tokens` для хранения токенов восстановления
 
-2. **Backend функции** (functions/functions.php)
+2. **Backend функции** (components/auth/functions.php)
    - `requestPasswordReset()` - создание токена
    - `validateResetToken()` - проверка валидности токена
    - `resetPasswordWithToken()` - сброс пароля

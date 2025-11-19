@@ -64,8 +64,8 @@ function route(): void
         'api' => 'components/auth/api.php',
         
         // Дополнительные
-        'database-demo' => 'pages/database_demo.php',
-        'check-session' => 'pages/check_session.php',
+        'database-demo' => 'components/auth/database_demo.php',
+        'check-session' => 'components/auth/check_session.php',
         '404' => 'pages/404.php',
     ];
     

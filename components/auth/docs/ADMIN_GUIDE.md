@@ -120,7 +120,7 @@
 
 ### API функции:
 
-**В файле `functions/functions.php`:**
+**В файле `components/auth/functions.php`:**
 
 ```php
 // Редактирование пользователя
