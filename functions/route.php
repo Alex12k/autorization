@@ -39,13 +39,35 @@ function route(): void
         
         if ($is_logout) {
             // Убираем параметр logout из URL для чистоты
-            header('Location: ' . url(), true, 302);
+            header('Location: /', true, 302);
             exit;
+        }
+        
+        // Проверка токена для сброса пароля
+        if (isset($_GET['token']) && !empty($_GET['token'])) {
+            // Загружаем функцию resetPassword
+            if (file_exists('components/auth/reset-password/reset_password.php')) {
+                require_once 'components/auth/reset-password/reset_password.php';
+                if (function_exists('resetPassword')) {
+                    resetPassword();
+                } else {
+                    http_response_code(500);
+                    echo '<h1>500 - Внутренняя ошибка</h1>';
+                    echo '<p>Функция resetPassword не найдена</p>';
+                }
+            } else {
+                http_response_code(404);
+                echo '<h1>404 - Страница сброса пароля не найдена</h1>';
+            }
+            return;
         }
         
         // Загружаем главную страницу (для всех пользователей, независимо от авторизации)
         if (file_exists('pages/home.php')) {
-            require 'pages/home.php';
+            require_once 'pages/home.php';
+            if (function_exists('home')) {
+                home();
+            }
         } else {
             http_response_code(404);
             echo '<h1>404 - Главная страница не найдена</h1>';
@@ -66,8 +88,8 @@ function route(): void
          //'reset-password' => ['file' => 'templates/reset-password/reset_password.php', 'function' => 'resetPassword'],
         
         // Приватные страницы
-        'dashboard' => ['file' => 'components/auth/templates/dashboard.php', 'function' => 'dashboard'],
-        'admin' => ['file' => 'components/auth/templates/admin.php', 'function' => 'admin'],
+        'dashboard' => ['file' => 'components/auth/dashboard/dashboard.php', 'function' => 'dashboard'],
+        'admin' => ['file' => 'components/auth/admin/admin.php', 'function' => 'admin'],
     ];
     
     /**
@@ -78,13 +100,10 @@ function route(): void
         // Главная страница
         'home' => 'pages/home.php',
         
-        // Точка входа приложения (если нужен прямой доступ к auth)
-        'auth' => 'components/auth/auth.php',
-        
-        // API
-        'api' => 'components/auth/api.php',
-        
-        // Дополнительные
+            // Точка входа приложения (если нужен прямой доступ к auth)
+            'auth' => 'components/auth/auth.php',
+            
+            // Дополнительные
         'database-demo' => 'components/auth/database_demo.php',
         'check-session' => 'components/auth/check_session.php',
         'clear-session' => 'pages/clear_session.php',

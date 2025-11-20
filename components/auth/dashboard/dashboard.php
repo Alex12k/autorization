@@ -1,6 +1,7 @@
 <?php
 /**
- * Шаблон страницы dashboard
+ * Компонент dashboard
+ * Панель управления для авторизованных пользователей
  */
 
 function dashboard(): void
@@ -148,7 +149,7 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">База данных</h3>
                     </div>
                     <div class="space-y-3">
-                        <a href="<?= url('database-demo') ?>" class="block bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors text-center">
+                        <a href="/database-demo" class="block bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors text-center">
                             <i class="ri-database-2-line mr-1"></i>
                             Демонстрация PostgreSQL
                         </a>
@@ -164,7 +165,7 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">PHP 8.4</h3>
                     </div>
                     <div class="space-y-3">
-                        <a href="<?= url() ?>" class="block bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors text-center">
+                        <a href="/" class="block bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors text-center">
                             <i class="ri-code-s-slash-line mr-1"></i>
                             Демонстрация PHP
                         </a>
@@ -181,7 +182,7 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">Админ панель</h3>
                     </div>
                     <div class="space-y-3">
-                        <a href="<?= url('admin') ?>" class="block bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors text-center">
+                        <a href="/admin" class="block bg-red-500 text-white py-2 px-4 rounded hover:bg-red-600 transition-colors text-center">
                             <i class="ri-admin-line mr-1"></i>
                             Управление пользователями
                         </a>
@@ -221,3 +222,4 @@ function dashboard(): void
         </div>
     <?php
 }
+

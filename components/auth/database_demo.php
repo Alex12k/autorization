@@ -177,7 +177,7 @@
 
             <!-- Кнопки навигации -->
             <div class="text-center mt-8 space-x-4">
-                <a href="<?= url() ?>" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
+                <a href="/" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
                     <i class="ri-home-line mr-2"></i>
                     Главная страница
                 </a>

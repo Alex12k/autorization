@@ -14,6 +14,9 @@ if (!defined('SYSTEM_INITIALIZED')) {
     define('SYSTEM_INITIALIZED', true);
 }
 
+// Загрузка функций компонента logout
+require_once __DIR__ . '/../functions.php';
+
 // Проверяем, что это AJAX запрос
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -66,7 +69,7 @@ if ($action === 'logout') {
     // Успешный выход - редирект на главную с параметром для предотвращения редиректа
     echo json_encode([
         'success' => true,
-        'redirect' => url() . '?logout=1'
+        'redirect' => '/?logout=1'
     ]);
     exit;
 }

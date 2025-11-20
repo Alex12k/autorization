@@ -14,6 +14,9 @@ if (!defined('SYSTEM_INITIALIZED')) {
     define('SYSTEM_INITIALIZED', true);
 }
 
+// Загрузка функций компонента login
+require_once __DIR__ . '/../functions.php';
+
 // Проверяем, что это AJAX запрос
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
@@ -83,7 +86,7 @@ if ($action === 'login') {
         echo json_encode([
             'success' => true,
             'message' => 'Успешный вход в систему',
-            'redirect' => url('dashboard')
+            'redirect' => '/dashboard'
         ]);
         exit;
     } else {

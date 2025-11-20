@@ -15,6 +15,9 @@ if (!defined('SYSTEM_INITIALIZED')) {
     define('SYSTEM_INITIALIZED', true);
 }
 
+// Загрузка функций компонента logout
+require_once __DIR__ . '/functions.php';
+
 function logoutPage(): void
 {
     // Выход из системы

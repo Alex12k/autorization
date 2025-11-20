@@ -119,7 +119,7 @@ function forgotPassword(): void
 
             <!-- Ссылка на главную -->
             <div class="text-center">
-                <a href="<?= url() ?>" class="text-gray-500 hover:text-gray-700 text-sm">
+                <a href="/" class="text-gray-500 hover:text-gray-700 text-sm">
                     <i class="ri-arrow-left-line mr-1"></i>
                     Вернуться на главную
                 </a>

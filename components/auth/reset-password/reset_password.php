@@ -16,6 +16,9 @@ if (!defined('SYSTEM_INITIALIZED')) {
     define('SYSTEM_INITIALIZED', true);
 }
 
+// Загрузка функций компонента reset-password
+require_once __DIR__ . '/functions.php';
+
 /**
  * Функция отображения формы сброса пароля
  * Отвечает только за отображение UI формы сброса пароля
@@ -205,7 +208,7 @@ function resetPassword(): void
 
             <!-- Ссылка на главную -->
             <div class="text-center">
-                <a href="<?= url() ?>" class="text-gray-500 hover:text-gray-700 text-sm">
+                <a href="/" class="text-gray-500 hover:text-gray-700 text-sm">
                     <i class="ri-arrow-left-line mr-1"></i>
                     Вернуться на главную
                 </a>

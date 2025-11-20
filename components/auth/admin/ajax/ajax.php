@@ -1,8 +1,21 @@
 <?php
 /**
- * API endpoint для асинхронных операций
- * Обрабатывает AJAX запросы и возвращает JSON
+ * AJAX обработчик для компонента admin
+ * Обрабатывает все AJAX запросы, связанные с управлением пользователями
  */
+
+// Загрузка зависимостей
+if (!defined('SYSTEM_INITIALIZED')) {
+    require_once __DIR__ . '/../../config.php';
+    require_once __DIR__ . '/../../functions.php';
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    define('SYSTEM_INITIALIZED', true);
+}
+
+// Загрузка функций компонента admin
+require_once __DIR__ . '/../functions.php';
 
 // Включаем буферизацию вывода для предотвращения лишнего вывода
 ob_start();
@@ -10,9 +23,6 @@ ob_start();
 // Отключаем вывод ошибок в браузер (только в лог)
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-
-// Инициализация системы
-require_once __DIR__ . '/init.php';
 
 // Очищаем буфер перед установкой заголовков
 ob_clean();
@@ -23,6 +33,7 @@ header('Content-Type: application/json; charset=utf-8');
 // Проверяем, что запрос методом POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
+    ob_end_clean();
     echo json_encode(['success' => false, 'error' => 'Метод не разрешен']);
     exit;
 }
@@ -30,7 +41,16 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 // Проверяем аутентификацию
 if (!isAuthenticated()) {
     http_response_code(401);
+    ob_end_clean();
     echo json_encode(['success' => false, 'error' => 'Не авторизован']);
+    exit;
+}
+
+// Проверяем права администратора
+if (!hasRole('admin')) {
+    http_response_code(403);
+    ob_end_clean();
+    echo json_encode(['success' => false, 'error' => 'Недостаточно прав']);
     exit;
 }
 
@@ -54,6 +74,7 @@ switch ($action) {
         
     default:
         http_response_code(400);
+        ob_end_clean();
         echo json_encode(['success' => false, 'error' => 'Неизвестное действие']);
         exit;
 }
@@ -70,6 +91,7 @@ function handleUpdateUser($data) {
     
     if (!verifyCSRFToken($csrf_token)) {
         http_response_code(403);
+        ob_end_clean();
         echo json_encode(['success' => false, 'error' => 'Ошибка безопасности']);
         exit;
     }
@@ -82,6 +104,7 @@ function handleUpdateUser($data) {
         http_response_code(400);
     }
     
+    ob_end_clean();
     echo json_encode($result);
     exit;
 }
@@ -95,6 +118,7 @@ function handleDeleteUser($data) {
     
     if (!verifyCSRFToken($csrf_token)) {
         http_response_code(403);
+        ob_end_clean();
         echo json_encode(['success' => false, 'error' => 'Ошибка безопасности']);
         exit;
     }
@@ -107,6 +131,7 @@ function handleDeleteUser($data) {
         http_response_code(400);
     }
     
+    ob_end_clean();
     echo json_encode($result);
     exit;
 }
@@ -115,13 +140,9 @@ function handleDeleteUser($data) {
  * Получение списка пользователей
  */
 function handleGetUsers() {
-    if (!hasRole('admin')) {
-        http_response_code(403);
-        echo json_encode(['success' => false, 'error' => 'Недостаточно прав']);
-        exit;
-    }
-    
     $users = getAllUsers();
+    ob_end_clean();
     echo json_encode(['success' => true, 'users' => $users]);
     exit;
 }
+

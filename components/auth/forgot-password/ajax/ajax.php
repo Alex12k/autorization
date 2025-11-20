@@ -14,6 +14,9 @@ if (!defined('SYSTEM_INITIALIZED')) {
     define('SYSTEM_INITIALIZED', true);
 }
 
+// Загрузка функций компонента forgot-password
+require_once __DIR__ . '/../functions.php';
+
 // Проверяем, что это AJAX запрос
 $is_ajax = !empty($_SERVER['HTTP_X_REQUESTED_WITH']) && 
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';

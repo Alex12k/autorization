@@ -1,7 +1,11 @@
 <?php
 /**
- * Шаблон страницы admin
+ * Компонент админ панели
+ * Управление пользователями системы
  */
+
+// Загрузка функций компонента admin
+require_once __DIR__ . '/functions.php';
 
 function admin(): void
 {
@@ -27,7 +31,7 @@ function admin(): void
                     </div>
 
                     <div class="flex items-center space-x-4">
-                        <a href="<?= url('dashboard') ?>" class="text-gray-600 hover:text-gray-900">
+                        <a href="/dashboard" class="text-gray-600 hover:text-gray-900">
                             <i class="ri-dashboard-line mr-1"></i>
                             Панель управления
                         </a>
@@ -257,6 +261,13 @@ function admin(): void
             </div>
         </div>
 
+        <!-- Данные для JavaScript (скрытый элемент) -->
+        <div id="admin-data" 
+             data-user-id="<?= getCurrentUser()['id'] ?>" 
+             data-user-role="<?= htmlspecialchars(getCurrentUser()['role']) ?>" 
+             data-csrf-token="<?= htmlspecialchars($csrf_token) ?>"
+             style="display: none;"></div>
+
         <!-- Toast уведомления -->
         <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
 
@@ -364,286 +375,6 @@ function admin(): void
                 </div>
             </div>
         </div>
-
-        <script>
-            const currentUserId = <?= getCurrentUser()['id'] ?>;
-            const currentUserRole = '<?= getCurrentUser()['role'] ?>';
-            const csrfToken = '<?= $csrf_token ?>';
-            const apiUrl = '<?= url('api') ?>';
-
-            // Toast уведомления
-            function showToast(message, type = 'success') {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-
-                const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-                const icon = type === 'success' ? 'ri-check-line' : 'ri-error-warning-line';
-
-                toast.className = `${bgColor} text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 transform transition-all duration-300 opacity-0 translate-x-full`;
-                toast.innerHTML = `
-                    <i class="${icon} text-2xl"></i>
-                    <span class="font-medium">${message}</span>
-                `;
-
-                container.appendChild(toast);
-
-                // Анимация появления
-                setTimeout(() => {
-                    toast.classList.remove('opacity-0', 'translate-x-full');
-                }, 10);
-
-                // Удаление через 3 секунды
-                setTimeout(() => {
-                    toast.classList.add('opacity-0', 'translate-x-full');
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            }
-
-            // Обновление строки пользователя в таблице
-            function updateUserRow(user) {
-                const row = document.querySelector(`tr[data-user-id="${user.id}"]`);
-                if (row) {
-                    const roleClass = user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800';
-
-                    // Обновляем текстовое содержимое
-                    // Используем более точный селектор для username (второй div, не иконка)
-                    const usernameCell = row.querySelectorAll('td')[1]; // вторая ячейка
-                    const usernameDiv = usernameCell.querySelector('div.flex > div.text-sm'); // второй div после иконки
-                    if (usernameDiv) {
-                        usernameDiv.textContent = user.username;
-                    }
-
-                    row.querySelector('.user-email').textContent = user.email;
-                    row.querySelector('.user-role').className = `px-2 py-1 text-xs font-semibold rounded-full ${roleClass} user-role`;
-                    row.querySelector('.user-role').textContent = user.role.charAt(0).toUpperCase() + user.role.slice(1);
-
-                    // ВАЖНО: Обновляем data-атрибуты для кнопки редактирования
-                    const editButton = row.querySelector('button[onclick*="openEditModal"]');
-                    if (editButton) {
-                        // Экранируем кавычки в данных
-                        const escapedUsername = user.username.replace(/'/g, "\'");
-                        const escapedEmail = user.email.replace(/'/g, "\'");
-                        editButton.setAttribute('onclick', 
-                            `openEditModal(${user.id}, '${escapedUsername}', '${escapedEmail}', '${user.role}')`
-                        );
-                    }
-
-                    // Добавляем визуальную обратную связь (мигание)
-                    row.style.transition = 'background-color 0.3s ease';
-                    row.style.backgroundColor = '#d1fae5';
-                    setTimeout(() => {
-                        row.style.backgroundColor = '';
-                    }, 500);
-                }
-            }
-
-            // Удаление строки пользователя из таблицы
-            function removeUserRow(userId) {
-                const row = document.querySelector(`tr[data-user-id="${userId}"]`);
-                if (row) {
-                    row.style.transition = 'all 0.3s ease';
-                    row.style.opacity = '0';
-                    row.style.transform = 'translateX(-20px)';
-                    setTimeout(() => {
-                        row.remove();
-                        updateStatistics();
-                    }, 300);
-                }
-            }
-
-            // Обновление статистики
-            function updateStatistics() {
-                const rows = document.querySelectorAll('tbody tr');
-                const totalUsers = rows.length;
-                const adminUsers = Array.from(rows).filter(row => 
-                    row.querySelector('.user-role')?.textContent.toLowerCase() === 'admin'
-                ).length;
-                const regularUsers = totalUsers - adminUsers;
-
-                // Обновляем счетчики с анимацией
-                animateCounter(document.querySelector('.stat-total'), totalUsers);
-                animateCounter(document.querySelector('.stat-admins'), adminUsers);
-                animateCounter(document.querySelector('.stat-users'), regularUsers);
-            }
-
-            // Анимация изменения числа
-            function animateCounter(element, newValue) {
-                if (!element) return;
-
-                const currentValue = parseInt(element.textContent) || 0;
-                if (currentValue === newValue) return;
-
-                element.style.transition = 'transform 0.3s ease';
-                element.style.transform = 'scale(1.2)';
-                element.textContent = newValue;
-
-                setTimeout(() => {
-                    element.style.transform = 'scale(1)';
-                }, 150);
-            }
-
-            // Открытие модального окна редактирования
-            function openEditModal(userId, username, email, role) {
-                document.getElementById('edit_user_id').value = userId;
-                document.getElementById('edit_username').value = username;
-                document.getElementById('edit_email').value = email;
-                document.getElementById('edit_role').value = role;
-
-                const isSelfEdit = (userId === currentUserId);
-                const isAdmin = (currentUserRole === 'admin');
-                const warningElement = document.getElementById('self_edit_warning');
-                const roleSelect = document.getElementById('edit_role');
-
-                if (isSelfEdit && isAdmin) {
-                    warningElement.classList.remove('hidden');
-                    roleSelect.addEventListener('change', function(e) {
-                        if (e.target.value === 'user') {
-                            if (!confirm('⚠️ ВНИМАНИЕ!\n\nВы пытаетесь понизить свою роль администратора.\n\nЭто действие будет заблокировано системой для защиты от потери административного доступа.\n\nЕсли вы действительно хотите перестать быть администратором, попросите другого администратора изменить вашу роль.')) {
-                                e.target.value = 'admin';
-                            }
-                        }
-                    });
-                } else {
-                    warningElement.classList.add('hidden');
-                }
-
-                document.getElementById('editModal').classList.remove('hidden');
-            }
-
-            // Закрытие модального окна
-            function closeEditModal() {
-                document.getElementById('editModal').classList.add('hidden');
-                document.getElementById('self_edit_warning').classList.add('hidden');
-            }
-
-            // Сохранение пользователя (AJAX)
-            async function saveUser() {
-                const userId = parseInt(document.getElementById('edit_user_id').value);
-                const username = document.getElementById('edit_username').value;
-                const email = document.getElementById('edit_email').value;
-                const role = document.getElementById('edit_role').value;
-                const saveBtn = document.getElementById('saveUserBtn');
-
-                // Блокируем кнопку
-                saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="ri-loader-4-line animate-spin mr-1"></i> Сохранение...';
-
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            action: 'update_user',
-                            user_id: userId,
-                            username: username,
-                            email: email,
-                            role: role,
-                            csrf_token: csrfToken
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        showToast(data.error || `Ошибка сервера: ${response.status}`, 'error');
-                        return;
-                    }
-
-                    if (data.success) {
-                        showToast(data.message || 'Пользователь успешно обновлен', 'success');
-                        updateUserRow({ id: userId, username, email, role });
-                        updateStatistics();
-                        closeEditModal();
-                    } else {
-                        showToast(data.error || 'Ошибка при обновлении', 'error');
-                    }
-                } catch (error) {
-                    console.error('Ошибка при обновлении пользователя:', error);
-                    showToast('Ошибка сети. Попробуйте снова.', 'error');
-                } finally {
-                    // Разблокируем кнопку
-                    saveBtn.disabled = false;
-                    saveBtn.innerHTML = '<i class="ri-save-line mr-1"></i> Сохранить';
-                }
-            }
-
-            // Подтверждение удаления пользователя
-            function deleteUserConfirm(userId, username) {
-                if (confirm(`Вы уверены, что хотите удалить пользователя "${username}"?`)) {
-                    deleteUser(userId);
-                }
-            }
-
-            // Удаление пользователя (AJAX)
-            async function deleteUser(userId) {
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            action: 'delete_user',
-                            user_id: userId,
-                            csrf_token: csrfToken
-                        })
-                    });
-
-                    const data = await response.json();
-
-                    if (!response.ok) {
-                        showToast(data.error || `Ошибка сервера: ${response.status}`, 'error');
-                        return;
-                    }
-
-                    if (data.success) {
-                        showToast(data.message || 'Пользователь успешно удален', 'success');
-                        removeUserRow(userId);
-                    } else {
-                        showToast(data.error || 'Ошибка при удалении', 'error');
-                    }
-                } catch (error) {
-                    console.error('Ошибка при удалении пользователя:', error);
-                    showToast('Ошибка сети. Попробуйте снова.', 'error');
-                }
-            }
-
-            // Добавляем data-user-id к строкам таблицы
-            document.addEventListener('DOMContentLoaded', function() {
-                const rows = document.querySelectorAll('tbody tr');
-                rows.forEach(row => {
-                    const cells = row.querySelectorAll('td');
-                    if (cells.length > 0) {
-                        const userId = cells[0].textContent.trim();
-                        row.setAttribute('data-user-id', userId);
-
-                        // Добавляем классы для быстрого доступа
-                        // Для username берем второй div (после иконки), а не первый
-                        const usernameDiv = cells[1].querySelector('div.flex > div.text-sm');
-                        if (usernameDiv) {
-                            usernameDiv.classList.add('user-username');
-                        }
-                        cells[2].classList.add('user-email');
-                        cells[3].querySelector('span').classList.add('user-role');
-                    }
-                });
-            });
-
-            // Закрытие модального окна при клике вне его
-            document.getElementById('editModal').addEventListener('click', function(event) {
-                if (event.target === this) {
-                    closeEditModal();
-                }
-            });
-
-            // Закрытие модального окна по клавише Escape
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    closeEditModal();
-                }
-            });
-        </script>
     <?php
 }
+

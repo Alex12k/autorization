@@ -52,18 +52,18 @@
 
             <!-- Действия -->
             <div class="flex gap-4 flex-wrap">
-                <a href="<?= url() ?>" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
+                <a href="/" class="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors">
                     <i class="ri-home-line mr-2"></i>
                     На главную
                 </a>
                 
                 <?php if (isAuthenticated()): ?>
-                    <a href="<?= url('dashboard') ?>" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
+                    <a href="/dashboard" class="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors">
                         <i class="ri-dashboard-line mr-2"></i>
                         Dashboard
                     </a>
                     
-                    <a href="<?= url('logout') ?>" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors">
+                    <a href="/logout" class="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 transition-colors">
                         <i class="ri-logout-box-line mr-2"></i>
                         Выйти
                     </a>
