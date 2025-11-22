@@ -54,16 +54,8 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="regist
         if (typeof res === 'object' && res !== null) {
             // Это уже объект (JSON распарсен автоматически)
             if (res.success) {
-                // Показываем сообщение об успехе
-                window.AuthFormUtils.showSuccess(form, res.message || 'Регистрация успешна! Теперь вы можете войти.');
-                
-                // Очищаем форму
-                form[0].reset();
-                
-                // Загружаем форму логина через небольшую задержку
-                setTimeout(function() {
-                    $('.open_login').trigger('click');
-                }, 1500);
+                // Сразу открываем форму логина
+                $('.open_login').trigger('click');
             } else {
                 // Ошибка - показываем сообщение
                 window.AuthFormUtils.showError(form, res.error || 'Ошибка регистрации');
