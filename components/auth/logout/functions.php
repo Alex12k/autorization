@@ -25,6 +25,8 @@ function logout(): void
     session_destroy();
     
     // Начинаем новую сессию для предотвращения ошибок
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 }
 

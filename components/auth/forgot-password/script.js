@@ -54,11 +54,11 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="forgot
                     formContainer.replaceWith(successHtml);
                 } else {
                     // Если не нашли контейнер, просто показываем сообщение
-                    window.AuthAjaxHandler.showSuccess(form, res.message || 'Ссылка для восстановления пароля отправлена на ваш email');
+                    window.AuthFormUtils.showSuccess(form, res.message || 'Ссылка для восстановления пароля отправлена на ваш email');
                 }
             } else {
                 // Ошибка - показываем сообщение
-                window.AuthAjaxHandler.showError(form, res.error || 'Ошибка восстановления пароля');
+                window.AuthFormUtils.showError(form, res.error || 'Ошибка восстановления пароля');
             }
         } else {
             // Это строка (HTML) - обновляем контейнер

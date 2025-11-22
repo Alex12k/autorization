@@ -15,5 +15,5 @@ function rt(){$url = get_clean_uri();
 			case '/dashboard': 												dashboard(); 						break;
 			case '/admin': 										   		admin();  							break;
 		default: 															   echo 'Страница не найдена'; 	break;
-}}
+	}}
 

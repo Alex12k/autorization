@@ -55,7 +55,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="login"
                 window.location.href = redirectUrl;
             } else {
                 // Ошибка - показываем сообщение
-                window.AuthAjaxHandler.showError(form, res.error || 'Ошибка входа');
+                window.AuthFormUtils.showError(form, res.error || 'Ошибка входа');
             }
         } else {
             // Это строка (HTML) - обновляем контейнер

@@ -55,7 +55,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="regist
             // Это уже объект (JSON распарсен автоматически)
             if (res.success) {
                 // Показываем сообщение об успехе
-                window.AuthAjaxHandler.showSuccess(form, res.message || 'Регистрация успешна! Теперь вы можете войти.');
+                window.AuthFormUtils.showSuccess(form, res.message || 'Регистрация успешна! Теперь вы можете войти.');
                 
                 // Очищаем форму
                 form[0].reset();
@@ -66,7 +66,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="regist
                 }, 1500);
             } else {
                 // Ошибка - показываем сообщение
-                window.AuthAjaxHandler.showError(form, res.error || 'Ошибка регистрации');
+                window.AuthFormUtils.showError(form, res.error || 'Ошибка регистрации');
             }
         } else {
             // Это строка (HTML) - обновляем контейнер

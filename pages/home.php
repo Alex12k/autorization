@@ -25,7 +25,19 @@ function home(){?>
                     Аккаунт
                 </a>
             </div>
+
+            <!-- Кнопка открытия модального окна -->
+            <div class="bg-white rounded-lg shadow-xl p-8">
+                <button 
+                    class="open_async-window w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-purple-600 hover:to-pink-700 transition-all duration-300 transform hover:scale-105 shadow-md"
+                >
+                    <i class="ri-window-line mr-2"></i>
+                    Открыть модальное окно
+                </button>
+            </div>
         </div>
+
     </div>
+
 
 <?php } ?>

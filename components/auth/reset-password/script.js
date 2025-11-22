@@ -215,7 +215,7 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="reset-
                 $('.authorization-ajax-container').html(successHtml);
             } else {
                 // Ошибка - показываем сообщение
-                window.AuthAjaxHandler.showError(form, res.error || 'Ошибка сброса пароля');
+                window.AuthFormUtils.showError(form, res.error || 'Ошибка сброса пароля');
             }
         } else {
             // Это строка (HTML) - обновляем контейнер

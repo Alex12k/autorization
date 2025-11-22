@@ -1,7 +1,6 @@
 /**
- * Общий обработчик для асинхронных операций авторизации
- * Содержит только общую логику и утилиты
- * Специфичная логика для login и register находится в соответствующих модулях
+ * Утилиты для работы с формами авторизации
+ * Содержит общие функции для отображения сообщений, индикаторов загрузки и работы с формами
  */
 
 (function($) {
@@ -31,8 +30,8 @@
         return '';
     }
 
-    // Экспорт функции для использования в модулях
-    window.AuthAjaxHandler = {
+    // Экспорт функций для использования в модулях
+    window.AuthFormUtils = {
         getBaseUrl: getBaseUrl,
         
         // Показать сообщение об ошибке
@@ -88,6 +87,7 @@
             if (originalText) {
                 button.html(originalText);
             }
+            
             button.prop('disabled', false);
         },
         
@@ -99,7 +99,10 @@
 
     // Инициализация при загрузке страницы
     $(document).ready(function() {
-        console.log('Auth AJAX Handler initialized');
+        console.log('Auth Form Utils initialized');
     });
 
 })(jQuery);
+
+
+
