@@ -16,35 +16,13 @@ function dashboard(): void
     $login_time = $_SESSION['login_time'] ?? time();
     $session_duration = time() - $login_time;
 
+    // Подключаем header
+    if (!function_exists('renderHeader')) {
+        require_once __DIR__ . '/../../header.php';
+    }
+    renderHeader('Панель управления', 'ri-dashboard-line');
+
     ?>
-        <!-- Навигация -->
-        <nav class="bg-white shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <div class="gradient-bg w-10 h-10 rounded-lg flex items-center justify-center mr-3">
-                            <i class="ri-dashboard-line text-white text-xl"></i>
-                        </div>
-                        <h1 class="text-xl font-bold text-gray-900">Панель управления</h1>
-                    </div>
-
-                    <div class="flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                                <i class="ri-user-line text-white text-sm"></i>
-                            </div>
-                            <span class="text-gray-700 font-medium"><?= htmlspecialchars($user['username']) ?></span>
-                        </div>
-
-                        <a href="#" class="open_logout bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors inline-block cursor-pointer">
-                            <i class="ri-logout-box-line mr-1"></i>
-                            Выйти
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Приветствие -->
             <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
@@ -125,11 +103,11 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">Настройки</h3>
                     </div>
                     <div class="space-y-3">
-                        <button class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                        <button type="button" class="open_modal_edit_profile_form w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors cursor-pointer">
                             <i class="ri-edit-line mr-1"></i>
                             Редактировать профиль
                         </button>
-                        <button class="w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors">
+                        <button type="button" class="open_modal_change_password_form w-full bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 transition-colors cursor-pointer">
                             <i class="ri-lock-password-line mr-1"></i>
                             Сменить пароль
                         </button>
@@ -149,10 +127,10 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">База данных</h3>
                     </div>
                     <div class="space-y-3">
-                        <a href="/database-demo" class="block bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors text-center">
+                        <button type="button" class="open_modal_database_demo w-full bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-600 transition-colors cursor-pointer">
                             <i class="ri-database-2-line mr-1"></i>
                             Демонстрация PostgreSQL
-                        </a>
+                        </button>
                         <div class="text-sm text-gray-600 mt-2">
                             Изучите возможности работы с базой данных PostgreSQL
                         </div>
@@ -165,10 +143,10 @@ function dashboard(): void
                         <h3 class="text-xl font-semibold">PHP 8.4</h3>
                     </div>
                     <div class="space-y-3">
-                        <a href="/" class="block bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors text-center">
+                        <button type="button" class="open_modal_php_demo w-full bg-orange-500 text-white py-2 px-4 rounded hover:bg-orange-600 transition-colors cursor-pointer">
                             <i class="ri-code-s-slash-line mr-1"></i>
                             Демонстрация PHP
-                        </a>
+                        </button>
                         <div class="text-sm text-gray-600 mt-2">
                             Изучите новые возможности PHP 8.4
                         </div>
@@ -188,6 +166,22 @@ function dashboard(): void
                         </a>
                         <div class="text-sm text-gray-600 mt-2">
                             Просмотр и управление всеми пользователями
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-lg p-6">
+                    <div class="flex items-center mb-4">
+                        <i class="ri-bug-line text-3xl text-yellow-500 mr-3"></i>
+                        <h3 class="text-xl font-semibold">Dev-инструменты</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <button type="button" class="open_modal_check_session w-full bg-yellow-500 text-white py-2 px-4 rounded hover:bg-yellow-600 transition-colors cursor-pointer">
+                            <i class="ri-bug-line mr-1"></i>
+                            Диагностика сессии
+                        </button>
+                        <div class="text-sm text-gray-600 mt-2">
+                            Просмотр данных сессии и отладочная информация
                         </div>
                     </div>
                 </div>

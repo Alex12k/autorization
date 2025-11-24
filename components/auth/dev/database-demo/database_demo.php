@@ -1,23 +1,49 @@
 <?php
-?>
-    <div class="bg-gradient-to-r from-green-500 to-blue-600 text-white py-8">
-        <div class="container mx-auto px-4">
-            <div class="text-center">
-                <i class="ri-database-2-line text-6xl mb-4"></i>
-                <h1 class="text-4xl font-bold mb-2">PHP + PostgreSQL</h1>
-                <p class="text-xl opacity-90">Демонстрация работы с базой данных</p>
-            </div>
-        </div>
-    </div>
+/**
+ * Dev-инструмент: Демонстрация PostgreSQL
+ * Показывает возможности работы с базой данных PostgreSQL
+ */
 
-    <div class="container mx-auto px-4 py-8">
-        <div class="max-w-4xl mx-auto">
-            
+// Загрузка зависимостей (если файл вызывается напрямую)
+if (!defined('SYSTEM_INITIALIZED')) {
+    require_once __DIR__ . '/../../config.php';
+    require_once __DIR__ . '/../../functions.php';
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+    define('SYSTEM_INITIALIZED', true);
+}
+
+/**
+ * Функция отображения демонстрации PostgreSQL в модальном окне
+ */
+function modal_database_demo(): void
+{
+    ?>
+    <div class="box-modal database-demo-modal !w-[95%] lg:!w-[1280px] !max-w-[95%] lg:!max-w-[1280px]">
+        <!-- Заголовок модального окна -->
+        <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+            <div class="flex items-center space-x-3">
+                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                    <i class="ri-database-2-line text-2xl text-white"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">PHP + PostgreSQL</h2>
+                    <p class="text-sm text-gray-500">Демонстрация работы с базой данных</p>
+                </div>
+            </div>
+            <button class="arcticmodal-close text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 hover:bg-gray-100 rounded-full">
+                <i class="ri-close-line text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Содержимое -->
+        <div class="space-y-6 max-h-[70vh] overflow-y-auto">
             <!-- Проверка расширений -->
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex items-center mb-4">
                     <i class="ri-check-line text-3xl text-green-500 mr-3"></i>
-                    <h2 class="text-xl font-semibold">Проверка расширений</h2>
+                    <h3 class="text-xl font-semibold">Проверка расширений</h3>
                 </div>
                 <div class="grid md:grid-cols-2 gap-4">
                     <?php
@@ -49,10 +75,10 @@
             </div>
 
             <!-- Демонстрация работы с JSON -->
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex items-center mb-4">
                     <i class="ri-file-text-line text-3xl text-blue-500 mr-3"></i>
-                    <h2 class="text-xl font-semibold">Работа с JSON</h2>
+                    <h3 class="text-xl font-semibold">Работа с JSON</h3>
                 </div>
                 <div class="space-y-4">
                     <?php
@@ -69,28 +95,28 @@
                     $decodedData = json_decode($jsonString, true);
                     
                     echo "<div class='bg-gray-50 p-4 rounded'>
-                            <h3 class='font-semibold mb-2'>Исходные данные:</h3>
-                            <pre class='text-sm text-gray-700'>" . print_r($userData, true) . "</pre>
+                            <h4 class='font-semibold mb-2'>Исходные данные:</h4>
+                            <pre class='text-xs text-gray-700 overflow-x-auto'>" . htmlspecialchars(print_r($userData, true)) . "</pre>
                           </div>";
                     
                     echo "<div class='bg-gray-50 p-4 rounded'>
-                            <h3 class='font-semibold mb-2'>JSON строка:</h3>
-                            <pre class='text-sm text-gray-700'>$jsonString</pre>
+                            <h4 class='font-semibold mb-2'>JSON строка:</h4>
+                            <pre class='text-xs text-gray-700 overflow-x-auto'>" . htmlspecialchars($jsonString) . "</pre>
                           </div>";
                     
                     echo "<div class='bg-gray-50 p-4 rounded'>
-                            <h3 class='font-semibold mb-2'>Декодированные данные:</h3>
-                            <pre class='text-sm text-gray-700'>" . print_r($decodedData, true) . "</pre>
+                            <h4 class='font-semibold mb-2'>Декодированные данные:</h4>
+                            <pre class='text-xs text-gray-700 overflow-x-auto'>" . htmlspecialchars(print_r($decodedData, true)) . "</pre>
                           </div>";
                     ?>
                 </div>
             </div>
 
             <!-- Демонстрация SQL запросов -->
-            <div class="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div class="bg-white rounded-lg shadow-lg p-6">
                 <div class="flex items-center mb-4">
                     <i class="ri-code-s-slash-line text-3xl text-purple-500 mr-3"></i>
-                    <h2 class="text-xl font-semibold">SQL Запросы (Демо)</h2>
+                    <h3 class="text-xl font-semibold">SQL Запросы (Демо)</h3>
                 </div>
                 <div class="space-y-4">
                     <?php
@@ -122,70 +148,14 @@
                         
                         echo "<div class='flex items-start space-x-3 p-3 bg-gray-50 rounded'>
                                 <span class='px-2 py-1 text-xs font-semibold bg-white rounded $color'>$type</span>
-                                <code class='text-sm flex-1'>$query</code>
+                                <code class='text-sm flex-1 overflow-x-auto'>" . htmlspecialchars($query) . "</code>
                               </div>";
                     }
                     ?>
                 </div>
             </div>
-
-            <!-- Демонстрация PHP 8.4 возможностей -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <div class="flex items-center mb-4">
-                    <i class="ri-flashlight-line text-3xl text-yellow-500 mr-3"></i>
-                    <h2 class="text-xl font-semibold">PHP 8.4 Новые возможности</h2>
-                </div>
-                <div class="space-y-4">
-                    <?php
-                    // Демонстрация match expression
-                    $status = 'active';
-                    $statusText = match($status) {
-                        'active' => 'Активный',
-                        'inactive' => 'Неактивный',
-                        'pending' => 'Ожидает',
-                        default => 'Неизвестно'
-                    };
-                    
-                    echo "<div class='bg-gray-50 p-4 rounded'>
-                            <h3 class='font-semibold mb-2'>Match Expression:</h3>
-                            <p>Статус: <span class='font-bold text-blue-600'>$statusText</span></p>
-                          </div>";
-                    
-                    // Демонстрация nullsafe operator
-                    $user = null;
-                    $userName = $user?->name ?? 'Пользователь не найден';
-                    
-                    echo "<div class='bg-gray-50 p-4 rounded'>
-                            <h3 class='font-semibold mb-2'>Nullsafe Operator:</h3>
-                            <p>Имя пользователя: <span class='font-bold text-green-600'>$userName</span></p>
-                          </div>";
-                    
-                    // Демонстрация named arguments
-                    function createUser(string $name, int $age = 25, string $email = '') {
-                        return "Пользователь: $name, Возраст: $age, Email: $email";
-                    }
-                    
-                    $userInfo = createUser(name: 'Мария', age: 30, email: 'maria@example.com');
-                    
-                    echo "<div class='bg-gray-50 p-4 rounded'>
-                            <h3 class='font-semibold mb-2'>Named Arguments:</h3>
-                            <p><span class='font-bold text-purple-600'>$userInfo</span></p>
-                          </div>";
-                    ?>
-                </div>
-            </div>
-
-            <!-- Кнопки навигации -->
-            <div class="text-center mt-8 space-x-4">
-                <a href="/" class="inline-block bg-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-600 transition-colors">
-                    <i class="ri-home-line mr-2"></i>
-                    Главная страница
-                </a>
-                <button onclick="location.reload()" class="inline-block bg-green-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-600 transition-colors">
-                    <i class="ri-refresh-line mr-2"></i>
-                    Обновить
-                </button>
-            </div>
         </div>
     </div>
+    <?php
+}
 

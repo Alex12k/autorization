@@ -2,7 +2,13 @@
 /**
  * Главная страница сайта
  */
-function home(){?>
+function home(){
+    // Подключаем header
+    if (!function_exists('renderHeader')) {
+        require_once __DIR__ . '/../components/header.php';
+    }
+    renderHeader();
+    ?>
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-purple-50">
         <div class="max-w-md w-full space-y-8">
             <!-- Заголовок -->
@@ -15,15 +21,15 @@ function home(){?>
                 <p class="text-gray-500 text-sm">Выберите действие для продолжения</p>
             </div>
 
-            <!-- Кнопка перехода в аккаунт -->
+            <!-- Кнопка открытия формы входа -->
             <div class="bg-white rounded-lg shadow-xl p-8">
-                <a 
-                    href="/auth" 
-                    class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md inline-block text-center"
+                <button 
+                    type="button"
+                    class="open_modal_login_form w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md"
                 >
                     <i class="ri-account-circle-line mr-2"></i>
                     Аккаунт
-                </a>
+                </button>
             </div>
 
             <!-- Кнопка открытия модального окна -->

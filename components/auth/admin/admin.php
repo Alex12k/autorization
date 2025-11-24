@@ -18,39 +18,13 @@ function admin(): void
     $users = getAllUsers();
     $csrf_token = generateCSRFToken();
 
+    // Подключаем header
+    if (!function_exists('renderHeader')) {
+        require_once __DIR__ . '/../../header.php';
+    }
+    renderHeader('Админ панель', 'ri-admin-line');
+
     ?>
-        <!-- Навигация -->
-        <nav class="bg-white shadow-lg">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <div class="gradient-bg w-10 h-10 rounded-lg flex items-center justify-center mr-3">
-                            <i class="ri-admin-line text-white text-xl"></i>
-                        </div>
-                        <h1 class="text-xl font-bold text-gray-900">Админ панель</h1>
-                    </div>
-
-                    <div class="flex items-center space-x-4">
-                        <a href="/dashboard" class="text-gray-600 hover:text-gray-900">
-                            <i class="ri-dashboard-line mr-1"></i>
-                            Панель управления
-                        </a>
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                                <i class="ri-admin-line text-white text-sm"></i>
-                            </div>
-                            <span class="text-gray-700 font-medium"><?= htmlspecialchars(getCurrentUser()['username']) ?></span>
-                        </div>
-
-                        <a href="#" class="open_logout bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors inline-block cursor-pointer">
-                            <i class="ri-logout-box-line mr-1"></i>
-                            Выйти
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Уведомления -->
             <?php if (isset($delete_success)): ?>
