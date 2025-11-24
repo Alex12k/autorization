@@ -1,4 +1,4 @@
-# PHP 8.4 Демонстрационный проект
+# PHP 8.4 Аутентификация
 
 [![PHP Version](https://img.shields.io/badge/PHP-8.4-blue.svg)](https://php.net)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
