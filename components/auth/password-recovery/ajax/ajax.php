@@ -1,7 +1,7 @@
 <?php
 /**
- * AJAX обработчик для компонента сброса пароля
- * Обрабатывает все AJAX запросы, связанные со сбросом пароля
+ * AJAX обработчик для компонента password-recovery
+ * Обрабатывает все AJAX запросы, связанные с восстановлением пароля (запрос и сброс)
  */
 
 // Загрузка зависимостей
@@ -14,7 +14,7 @@ if (!defined('SYSTEM_INITIALIZED')) {
     define('SYSTEM_INITIALIZED', true);
 }
 
-// Загрузка функций компонента reset-password
+// Загрузка функций компонента password-recovery
 require_once __DIR__ . '/../functions.php';
 
 // Проверяем, что это AJAX запрос
@@ -34,39 +34,61 @@ if (!$is_ajax) {
 // Получаем действие
 $action = $_POST['action'] ?? '';
 
-// Обработка запроса на открытие формы сброса пароля
-if ($action === 'open_reset-password') {
-    // Для HTML ответа устанавливаем соответствующий заголовок
+// Обработка запроса на открытие формы запроса восстановления пароля в модальном окне
+if ($action === 'open_modal_forgot_password_form') {
     header('Content-Type: text/html; charset=utf-8');
-    
-    // Получаем токен из POST (в AJAX запросах токен передается через POST)
+    require_once __DIR__ . '/../password_recovery.php';
+    modal_forgot_password_form();
+    exit;
+}
+
+// Обработка запроса на открытие формы сброса пароля в модальном окне
+if ($action === 'open_modal_reset_password_form') {
+    header('Content-Type: text/html; charset=utf-8');
+    require_once __DIR__ . '/../password_recovery.php';
     $token = $_POST['token'] ?? '';
+    modal_reset_password_form($token);
+    exit;
+}
+
+// Обработка отправки формы запроса восстановления пароля
+if ($action === 'forgot-password') {
+    // Устанавливаем заголовок для JSON ответов
+    header('Content-Type: application/json');
+    $csrf_token = $_POST['csrf_token'] ?? '';
     
-    // Загружаем функцию resetPassword() для отображения формы
-    require_once __DIR__ . '/../reset_password.php';
-    
-    // Временно очищаем POST данные, чтобы resetPassword() не обрабатывал их
-    $original_post = $_POST;
-    $original_get = $_GET;
-    $_POST = [];
-    
-    // Устанавливаем токен в GET для функции resetPassword()
-    if (!empty($token)) {
-        $_GET['token'] = $token;
+    // Проверка CSRF токена
+    if (!verifyCSRFToken($csrf_token)) {
+        echo json_encode([
+            'success' => false,
+            'error' => 'Ошибка безопасности. Попробуйте еще раз.'
+        ]);
+        exit;
     }
     
-    // Захватываем вывод функции resetPassword()
-    ob_start();
-    resetPassword();
-    $form_html = ob_get_clean();
+    // Получение данных формы
+    $email = trim($_POST['email'] ?? '');
     
-    // Восстанавливаем данные
-    $_POST = $original_post;
-    $_GET = $original_get;
+    // Запрос на восстановление пароля
+    $result = requestPasswordReset($email);
     
-    // Возвращаем HTML формы
-    echo $form_html;
-    exit;
+    if ($result['success']) {
+        // Успешный запрос
+        echo json_encode([
+            'success' => true,
+            'message' => 'Ссылка для восстановления пароля отправлена на ваш email',
+            'token' => $result['token'] ?? null,
+            'email' => $result['email'] ?? null
+        ]);
+        exit;
+    } else {
+        // Ошибка
+        echo json_encode([
+            'success' => false,
+            'error' => $result['error']
+        ]);
+        exit;
+    }
 }
 
 // Обработка отправки формы сброса пароля

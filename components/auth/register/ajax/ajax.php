@@ -34,28 +34,11 @@ if (!$is_ajax) {
 // Получаем действие
 $action = $_POST['action'] ?? '';
 
-// Обработка запроса на открытие формы регистрации
-if ($action === 'open_register') {
-    // Для HTML ответа устанавливаем соответствующий заголовок
+// Обработка запроса на открытие формы регистрации в модальном окне
+if ($action === 'open_modal_register_form') {
     header('Content-Type: text/html; charset=utf-8');
-    
-    // Загружаем функцию register() для отображения формы
     require_once __DIR__ . '/../register.php';
-    
-    // Временно очищаем POST данные, чтобы register() не обрабатывал их
-    $original_post = $_POST;
-    $_POST = [];
-    
-    // Захватываем вывод функции register()
-    ob_start();
-    register();
-    $form_html = ob_get_clean();
-    
-    // Восстанавливаем POST данные
-    $_POST = $original_post;
-    
-    // Возвращаем HTML формы
-    echo $form_html;
+    modal_register_form();
     exit;
 }
 
@@ -106,5 +89,4 @@ echo json_encode([
     'error' => 'Неизвестное действие'
 ]);
 exit;
-
 

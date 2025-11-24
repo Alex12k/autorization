@@ -68,12 +68,12 @@
                         Выйти
                     </a>
                 <?php else: ?>
-                    <a href="#" class="open_login bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors cursor-pointer">
+                    <a href="#" class="open_modal_login_form bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors cursor-pointer">
                         <i class="ri-login-box-line mr-2"></i>
                         Войти
                     </a>
                     
-                    <a href="#" class="open_register bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors cursor-pointer">
+                    <a href="#" class="open_modal_register_form bg-purple-500 text-white px-6 py-3 rounded-lg hover:bg-purple-600 transition-colors cursor-pointer">
                         <i class="ri-user-add-line mr-2"></i>
                         Регистрация
                     </a>

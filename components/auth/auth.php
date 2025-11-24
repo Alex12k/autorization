@@ -42,7 +42,7 @@ function auth(){?>
             <div class="bg-white rounded-lg shadow-xl p-8 space-y-4">
                 <button 
                     type="button" 
-                    class="open_login w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md"
+                    class="open_modal_login_form w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 transform hover:scale-105 shadow-md"
                 >
                     <i class="ri-login-box-line mr-2"></i>
                     Войти
@@ -50,7 +50,7 @@ function auth(){?>
                 
                 <button 
                     type="button" 
-                    class="open_register w-full bg-gradient-to-r from-green-500 to-teal-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-green-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-md"
+                    class="open_modal_register_form w-full bg-gradient-to-r from-green-500 to-teal-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:from-green-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-md"
                 >
                     <i class="ri-user-add-line mr-2"></i>
                     Зарегистрироваться
@@ -86,8 +86,7 @@ function auth_scripts() {
 <script src="/components/auth/utils/animations.js"></script>
 <script src="/components/auth/login/script.js"></script>
 <script src="/components/auth/register/script.js"></script>
-<script src="/components/auth/forgot-password/script.js"></script>
-<script src="/components/auth/reset-password/script.js"></script>
+<script src="/components/auth/password-recovery/script.js"></script>
 <script src="/components/auth/logout/script.js"></script>
 <script src="/components/auth/admin/script.js"></script>
 <?php

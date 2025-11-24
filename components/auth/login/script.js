@@ -1,6 +1,5 @@
 /**
  * Модуль обработки логина
- * Один универсальный AJAX обработчик, который вызывает функцию login()
  */
 
 /**
@@ -21,22 +20,20 @@ function togglePassword(inputId, iconId) {
     }
 }
 
-// Вызов формы логина по клику
-$(document).on('click', '.open_login', function(e) {
+// Вызов формы логина по клику (открывает модальное окно)
+$(document).on('click', '.open_modal_login_form', function(e) {
     e.preventDefault();
-    console.log('open_login');
-    $.post('/components/auth/login/ajax/ajax.php', {action: 'open_login', ajax: '1'}, function(res) {
-        console.log(res);
-        $('.authorization-ajax-container').html(res);
+    
+    // Закрываем все открытые модальные окна перед открытием нового
+    $.arcticmodal('close');
+    
+    $.post('/components/auth/login/ajax/ajax.php', {action: 'open_modal_login_form'}, function(res) {
+        $(res).arcticmodal({closeOnOverlayClick: false});
     });
 });
 
-
-
-
-
-// Обработка отправки формы логина через AJAX
-$(document).on('submit', '.authorization-ajax-container form[data-action="login"]', function(e){
+// Обработка отправки формы логина из модального окна
+$(document).on('submit', '.login-modal form[data-action="login"]', function(e){
     e.preventDefault();
     
     let form = $(this);
@@ -49,6 +46,8 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="login"
         if (typeof res === 'object' && res !== null) {
             // Это уже объект (JSON распарсен автоматически)
             if (res.success) {
+                // Закрываем модальное окно
+                $('.arcticmodal-container').arcticmodal('close');
                 // Успешный вход - редирект
                 let redirectUrl = res.redirect || '/dashboard';
                 console.log('Редирект на:', redirectUrl);
@@ -57,9 +56,6 @@ $(document).on('submit', '.authorization-ajax-container form[data-action="login"
                 // Ошибка - показываем сообщение
                 window.AuthFormUtils.showError(form, res.error || 'Ошибка входа');
             }
-        } else {
-            // Это строка (HTML) - обновляем контейнер
-            $('.authorization-ajax-container').html(res);
         }
     });
 });

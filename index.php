@@ -38,6 +38,12 @@ require_once 'components/auth/auth.php';
 
 rt();
 ?>
+<div class="open_modal_login_form">
+    <button class="open_modal_login_form_button">
+        <i class="ri-login-box-line"></i>
+        Войти
+    </button>
+</div>
 
 <footer class="bg-gray-800 text-white py-6 mt-12">
     <div class="container mx-auto px-4 text-center">

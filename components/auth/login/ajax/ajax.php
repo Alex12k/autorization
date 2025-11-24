@@ -34,28 +34,16 @@ if (!$is_ajax) {
 // Получаем действие
 $action = $_POST['action'] ?? '';
 
-// Обработка запроса на открытие формы логина
-if ($action === 'open_login') {
+// Обработка запроса на открытие формы логина в модальном окне
+if ($action === 'open_modal_login_form') {
     // Для HTML ответа устанавливаем соответствующий заголовок
     header('Content-Type: text/html; charset=utf-8');
     
-    // Загружаем функцию login() для отображения формы
+    // Загружаем функцию modal_login_form() для отображения формы
     require_once __DIR__ . '/../login.php';
     
-    // Временно очищаем POST данные, чтобы login() не обрабатывал их
-    $original_post = $_POST;
-    $_POST = [];
-    
-    // Захватываем вывод функции login()
-    ob_start();
-    login();
-    $form_html = ob_get_clean();
-    
-    // Восстанавливаем POST данные
-    $_POST = $original_post;
-    
-    // Возвращаем HTML формы
-    echo $form_html;
+    // Вызываем функцию модального окна
+    modal_login_form();
     exit;
 }
 
