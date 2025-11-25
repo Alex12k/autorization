@@ -34,8 +34,9 @@ function auth_scripts() {
 <script src="/components/auth/edit-profile/script.js"></script>
 <script src="/components/auth/logout/script.js"></script>
 <script src="/components/auth/admin/script.js"></script>
-<script src="/components/auth/dev/check-session/script.js"></script>
-<script src="/components/auth/dev/database-demo/script.js"></script>
-<script src="/components/auth/dev/php-demo/script.js"></script>
+    <script src="/components/auth/dev/check-session/script.js"></script>
+    <script src="/components/auth/dev/database-demo/script.js"></script>
+    <script src="/components/auth/dev/php-demo/script.js"></script>
+    <script src="/components/auth/dashboard/script.js"></script>
 <?php
 }
