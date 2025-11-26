@@ -69,7 +69,7 @@ switch ($action) {
         break;
         
     case 'get_users':
-        handleGetUsers();
+        handleGetUsers($data);
         break;
         
     default:
@@ -137,12 +137,32 @@ function handleDeleteUser($data) {
 }
 
 /**
- * Получение списка пользователей
+ * Получение списка пользователей с фильтрами и пагинацией
  */
-function handleGetUsers() {
-    $users = getAllUsers();
+function handleGetUsers($data) {
+    $options = [
+        'search' => $data['search'] ?? '',
+        'role' => $data['role'] ?? '',
+        'sort' => $data['sort'] ?? 'created_desc',
+        'limit' => $data['limit'] ?? 50,
+        'offset' => $data['offset'] ?? 0,
+    ];
+
+    $result = getUsersWithFilters($options);
+    $users = $result['users'] ?? [];
+    $total = $result['total'] ?? 0;
+
+    $limit = max(1, (int)$options['limit']);
+    $offset = max(0, (int)$options['offset']);
+    $hasMore = ($offset + $limit) < $total;
+
     ob_end_clean();
-    echo json_encode(['success' => true, 'users' => $users]);
+    echo json_encode([
+        'success' => true,
+        'users' => $users,
+        'total' => $total,
+        'has_more' => $hasMore,
+    ]);
     exit;
 }
 

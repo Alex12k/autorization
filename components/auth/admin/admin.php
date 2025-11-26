@@ -15,7 +15,7 @@ function admin(): void
         exit;
     }
 
-    $users = getAllUsers();
+    $stats = getUsersStats();
     $csrf_token = generateCSRFToken();
 
     // Подключаем header
@@ -80,7 +80,7 @@ function admin(): void
                             <i class="ri-user-line text-white text-xl"></i>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-gray-900 stat-total"><?= count($users) ?></div>
+                            <div class="text-2xl font-bold text-gray-900 stat-total"><?= $stats['total'] ?></div>
                             <div class="text-sm text-gray-600">Всего пользователей</div>
                         </div>
                     </div>
@@ -92,7 +92,7 @@ function admin(): void
                             <i class="ri-admin-line text-white text-xl"></i>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-gray-900 stat-admins"><?= count(array_filter($users, fn($u) => $u['role'] === 'admin')) ?></div>
+                            <div class="text-2xl font-bold text-gray-900 stat-admins"><?= $stats['admins'] ?></div>
                             <div class="text-sm text-gray-600">Администраторов</div>
                         </div>
                     </div>
@@ -104,7 +104,7 @@ function admin(): void
                             <i class="ri-user-line text-white text-xl"></i>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-gray-900 stat-users"><?= count(array_filter($users, fn($u) => $u['role'] === 'user')) ?></div>
+                            <div class="text-2xl font-bold text-gray-900 stat-users"><?= $stats['users'] ?></div>
                             <div class="text-sm text-gray-600">Обычных пользователей</div>
                         </div>
                     </div>
@@ -116,7 +116,7 @@ function admin(): void
                             <i class="ri-calendar-line text-white text-xl"></i>
                         </div>
                         <div>
-                            <div class="text-2xl font-bold text-gray-900"><?= count(array_filter($users, fn($u) => strtotime($u['created_at']) > strtotime('-7 days'))) ?></div>
+                            <div class="text-2xl font-bold text-gray-900"><?= $stats['last_week'] ?></div>
                             <div class="text-sm text-gray-600">За неделю</div>
                         </div>
                     </div>
@@ -125,14 +125,47 @@ function admin(): void
 
             <!-- Таблица пользователей -->
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">
-                        <i class="ri-table-line mr-2"></i>
-                        Список пользователей
-                    </h3>
+                <div class="px-6 py-4 border-b border-gray-200 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">
+                            <i class="ri-table-line mr-2"></i>
+                            Список пользователей
+                        </h3>
+                        <p class="text-sm text-gray-500">Фильтры, поиск и умная подгрузка при прокрутке</p>
+                    </div>
+                    <!-- Фильтры -->
+                    <div class="flex flex-col sm:flex-row gap-2 w-full md:w-auto" id="admin-filters">
+                        <div class="relative flex-1">
+                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                                <i class="ri-search-line"></i>
+                            </span>
+                            <input 
+                                type="text" 
+                                id="filter_search" 
+                                class="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                placeholder="Поиск по имени или email">
+                        </div>
+                        <select 
+                            id="filter_role" 
+                            class="sm:w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="">Все роли</option>
+                            <option value="user">Только пользователи</option>
+                            <option value="admin">Только админы</option>
+                        </select>
+                        <select 
+                            id="filter_sort" 
+                            class="sm:w-44 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        >
+                            <option value="created_desc">Новые сначала</option>
+                            <option value="created_asc">Старые сначала</option>
+                            <option value="username_asc">Имя A→Z</option>
+                            <option value="username_desc">Имя Z→A</option>
+                        </select>
+                    </div>
                 </div>
 
-                <div class="overflow-x-auto">
+                <div class="overflow-x-auto max-h-[600px]" id="users-table-container">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
@@ -156,55 +189,19 @@ function admin(): void
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
-                            <?php foreach ($users as $user): ?>
-                            <tr class="hover:bg-gray-50">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <?= $user['id'] ?>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="flex items-center">
-                                        <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
-                                            <i class="ri-user-line text-white text-sm"></i>
-                                        </div>
-                                        <div class="text-sm font-medium text-gray-900">
-                                            <?= htmlspecialchars($user['username']) ?>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <?= htmlspecialchars($user['email']) ?>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <span class="px-2 py-1 text-xs font-semibold rounded-full <?= $user['role'] === 'admin' ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800' ?>">
-                                        <?= ucfirst($user['role']) ?>
-                                    </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    <?= date('d.m.Y H:i', strtotime($user['created_at'])) ?>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                                    <div class="flex space-x-2">
-                                        <button 
-                                            onclick="openEditModal(<?= $user['id'] ?>, '<?= htmlspecialchars($user['username'], ENT_QUOTES) ?>', '<?= htmlspecialchars($user['email'], ENT_QUOTES) ?>', '<?= $user['role'] ?>')" 
-                                            class="text-blue-600 hover:text-blue-900" 
-                                            title="Редактировать пользователя">
-                                            <i class="ri-edit-line"></i>
-                                        </button>
-                                        <?php if ($user['id'] != getCurrentUser()['id']): ?>
-                                        <button 
-                                            onclick="deleteUserConfirm(<?= $user['id'] ?>, '<?= htmlspecialchars($user['username'], ENT_QUOTES) ?>')"
-                                            class="text-red-600 hover:text-red-900" 
-                                            title="Удалить пользователя">
-                                            <i class="ri-delete-bin-line"></i>
-                                        </button>
-                                        <?php endif; ?>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endforeach; ?>
+                        <tbody id="users-table-body" class="bg-white divide-y divide-gray-200">
+                            <!-- Строки пользователей будут подгружаться лениво через JS -->
                         </tbody>
                     </table>
+                    <!-- Индикатор загрузки / конца списка -->
+                    <div id="users-loading-indicator" class="py-3 text-center text-sm text-gray-500 hidden">
+                        <i class="ri-loader-4-line animate-spin mr-1"></i>
+                        Загрузка пользователей...
+                    </div>
+                    <div id="users-end-indicator" class="py-3 text-center text-sm text-gray-400 hidden">
+                        <i class="ri-check-line mr-1"></i>
+                        Все пользователи загружены
+                    </div>
                 </div>
             </div>
 

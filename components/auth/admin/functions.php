@@ -157,3 +157,146 @@ function deleteUser(int $user_id): array
     }
 }
 
+/**
+ * Получение агрегированной статистики по пользователям
+ */
+function getUsersStats(): array
+{
+    if (!hasRole('admin')) {
+        return [
+            'total' => 0,
+            'admins' => 0,
+            'users' => 0,
+            'last_week' => 0,
+        ];
+    }
+
+    try {
+        $pdo = getDB();
+
+        // Общее количество пользователей
+        $totalStmt = $pdo->query("SELECT COUNT(*) FROM users");
+        $total = (int)$totalStmt->fetchColumn();
+
+        // Количество админов
+        $adminsStmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'admin'");
+        $admins = (int)$adminsStmt->fetchColumn();
+
+        // Количество обычных пользователей
+        $usersStmt = $pdo->query("SELECT COUNT(*) FROM users WHERE role = 'user'");
+        $users = (int)$usersStmt->fetchColumn();
+
+        // Пользователи за последнюю неделю
+        $weekStmt = $pdo->prepare("
+            SELECT COUNT(*) 
+            FROM users 
+            WHERE created_at >= datetime('now', '-7 days')
+        ");
+        $weekStmt->execute();
+        $lastWeek = (int)$weekStmt->fetchColumn();
+
+        return [
+            'total' => $total,
+            'admins' => $admins,
+            'users' => $users,
+            'last_week' => $lastWeek,
+        ];
+    } catch (Exception $e) {
+        error_log("Get users stats error: " . $e->getMessage());
+        return [
+            'total' => 0,
+            'admins' => 0,
+            'users' => 0,
+            'last_week' => 0,
+        ];
+    }
+}
+
+/**
+ * Получение пользователей с учетом фильтров и пагинации
+ */
+function getUsersWithFilters(array $options): array
+{
+    if (!hasRole('admin')) {
+        return ['users' => [], 'total' => 0];
+    }
+
+    $search = trim($options['search'] ?? '');
+    $role = $options['role'] ?? '';
+    $sort = $options['sort'] ?? 'created_desc';
+    $limit = max(1, min(200, (int)($options['limit'] ?? 50)));
+    $offset = max(0, (int)($options['offset'] ?? 0));
+
+    $where = [];
+    $params = [];
+
+    if ($search !== '') {
+        $where[] = "(username LIKE :search OR email LIKE :search)";
+        $params[':search'] = '%' . $search . '%';
+    }
+
+    if (in_array($role, ['user', 'admin'], true)) {
+        $where[] = "role = :role";
+        $params[':role'] = $role;
+    }
+
+    // Сортировка
+    switch ($sort) {
+        case 'username_asc':
+            $orderBy = 'username ASC';
+            break;
+        case 'username_desc':
+            $orderBy = 'username DESC';
+            break;
+        case 'created_asc':
+            $orderBy = 'created_at ASC';
+            break;
+        case 'created_desc':
+        default:
+            $orderBy = 'created_at DESC';
+            break;
+    }
+
+    $whereSql = $where ? ('WHERE ' . implode(' AND ', $where)) : '';
+
+    try {
+        $pdo = getDB();
+
+        // Общее количество с учетом фильтров
+        $countSql = "SELECT COUNT(*) FROM users {$whereSql}";
+        $countStmt = $pdo->prepare($countSql);
+        $countStmt->execute($params);
+        $total = (int)$countStmt->fetchColumn();
+
+        // Данные текущей страницы
+        $dataSql = "
+            SELECT id, username, email, role, created_at 
+            FROM users 
+            {$whereSql}
+            ORDER BY {$orderBy}
+            LIMIT :limit OFFSET :offset
+        ";
+
+        $dataStmt = $pdo->prepare($dataSql);
+        foreach ($params as $key => $value) {
+            $dataStmt->bindValue($key, $value);
+        }
+        $dataStmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+        $dataStmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $dataStmt->execute();
+
+        $users = $dataStmt->fetchAll();
+
+        return [
+            'users' => $users,
+            'total' => $total,
+        ];
+    } catch (Exception $e) {
+        error_log("Get users with filters error: " . $e->getMessage());
+        return [
+            'users' => [],
+            'total' => 0,
+        ];
+    }
+}
+

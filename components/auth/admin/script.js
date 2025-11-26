@@ -9,6 +9,20 @@ let currentUserRole;
 let csrfToken;
 const apiUrl = '/components/auth/admin/ajax/ajax.php';
 
+// Состояние для ленивой подгрузки
+let usersOffset = 0;
+const usersLimit = 50;
+let usersHasMore = true;
+let usersIsLoading = false;
+let usersTotal = 0;
+
+// Текущие фильтры
+let currentFilters = {
+    search: '',
+    role: '',
+    sort: 'created_desc',
+};
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
     // Получаем данные из data-атрибутов
@@ -19,33 +33,218 @@ document.addEventListener('DOMContentLoaded', function() {
         csrfToken = adminData.dataset.csrfToken || '';
     }
 
-    // Инициализация таблицы пользователей
-    initUsersTable();
+    // Инициализация фильтров и ленивой подгрузки
+    initUsersFilters();
+    initInfiniteScroll();
+
+    // Первичная загрузка
+    loadUsers(true);
 
     // Инициализация модального окна
     initEditModal();
 });
 
 /**
- * Инициализация таблицы пользователей
+ * Инициализация фильтров
  */
-function initUsersTable() {
-    const rows = document.querySelectorAll('tbody tr');
-    rows.forEach(row => {
-        const cells = row.querySelectorAll('td');
-        if (cells.length > 0) {
-            const userId = cells[0].textContent.trim();
-            row.setAttribute('data-user-id', userId);
+function initUsersFilters() {
+    const searchInput = document.getElementById('filter_search');
+    const roleSelect = document.getElementById('filter_role');
+    const sortSelect = document.getElementById('filter_sort');
 
-            // Добавляем классы для быстрого доступа
-            const usernameDiv = cells[1].querySelector('div.flex > div.text-sm');
-            if (usernameDiv) {
-                usernameDiv.classList.add('user-username');
-            }
-            cells[2].classList.add('user-email');
-            cells[3].querySelector('span').classList.add('user-role');
+    if (searchInput) {
+        let searchTimeout;
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentFilters.search = searchInput.value.trim();
+                resetUsersAndLoad();
+            }, 300);
+        });
+    }
+
+    if (roleSelect) {
+        roleSelect.addEventListener('change', () => {
+            currentFilters.role = roleSelect.value;
+            resetUsersAndLoad();
+        });
+    }
+
+    if (sortSelect) {
+        sortSelect.addEventListener('change', () => {
+            currentFilters.sort = sortSelect.value || 'created_desc';
+            resetUsersAndLoad();
+        });
+    }
+}
+
+/**
+ * Инициализация бесконечной прокрутки
+ */
+function initInfiniteScroll() {
+    const container = document.getElementById('users-table-container');
+    if (!container) return;
+
+    container.addEventListener('scroll', () => {
+        if (usersIsLoading || !usersHasMore) return;
+
+        const threshold = 150; // px до низа контейнера
+        if (container.scrollTop + container.clientHeight >= container.scrollHeight - threshold) {
+            loadUsers(false);
         }
     });
+}
+
+/**
+ * Сброс списка пользователей и загрузка с нуля
+ */
+function resetUsersAndLoad() {
+    usersOffset = 0;
+    usersHasMore = true;
+    const tbody = document.getElementById('users-table-body');
+    if (tbody) {
+        tbody.innerHTML = '';
+    }
+    hideEndIndicator();
+    loadUsers(true);
+}
+
+/**
+ * Загрузка пользователей через AJAX
+ */
+async function loadUsers(isInitial = false) {
+    if (usersIsLoading || !usersHasMore && !isInitial) return;
+
+    const loadingIndicator = document.getElementById('users-loading-indicator');
+    if (loadingIndicator) {
+        loadingIndicator.classList.remove('hidden');
+    }
+
+    usersIsLoading = true;
+
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                action: 'get_users',
+                limit: usersLimit,
+                offset: usersOffset,
+                search: currentFilters.search,
+                role: currentFilters.role,
+                sort: currentFilters.sort,
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            showToast(data.error || `Ошибка сервера: ${response.status}`, 'error');
+            return;
+        }
+
+        const users = data.users || [];
+        usersTotal = data.total ?? usersTotal;
+        usersHasMore = Boolean(data.has_more);
+
+        appendUsersToTable(users);
+
+        usersOffset += users.length;
+
+        if (!usersHasMore) {
+            showEndIndicator();
+        } else {
+            hideEndIndicator();
+        }
+    } catch (error) {
+        console.error('Ошибка при загрузке пользователей:', error);
+        showToast('Ошибка сети при загрузке пользователей. Попробуйте снова.', 'error');
+    } finally {
+        usersIsLoading = false;
+        if (loadingIndicator) {
+            loadingIndicator.classList.add('hidden');
+        }
+    }
+}
+
+/**
+ * Добавление пользователей в таблицу
+ */
+function appendUsersToTable(users) {
+    const tbody = document.getElementById('users-table-body');
+    if (!tbody || !Array.isArray(users)) return;
+
+    const currentUserIdLocal = currentUserId;
+
+    users.forEach(user => {
+        const isAdmin = user.role === 'admin';
+
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        row.setAttribute('data-user-id', user.id);
+
+        row.innerHTML = `
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${user.id}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                    <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mr-3">
+                        <i class="ri-user-line text-white text-sm"></i>
+                    </div>
+                    <div class="text-sm font-medium text-gray-900 user-username">
+                        ${escapeHtml(user.username)}
+                    </div>
+                </div>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 user-email">
+                ${escapeHtml(user.email)}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs font-semibold rounded-full ${isAdmin ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'} user-role">
+                    ${user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                </span>
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                ${formatDateTime(user.created_at)}
+            </td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                <div class="flex space-x-2">
+                    <button 
+                        onclick="openEditModal(${user.id}, '${escapeJs(user.username)}', '${escapeJs(user.email)}', '${user.role}')" 
+                        class="text-blue-600 hover:text-blue-900" 
+                        title="Редактировать пользователя">
+                        <i class="ri-edit-line"></i>
+                    </button>
+                    ${user.id != currentUserIdLocal ? `
+                    <button 
+                        onclick="deleteUserConfirm(${user.id}, '${escapeJs(user.username)}')"
+                        class="text-red-600 hover:text-red-900" 
+                        title="Удалить пользователя">
+                        <i class="ri-delete-bin-line"></i>
+                    </button>
+                    ` : ''}
+                </div>
+            </td>
+        `;
+
+        tbody.appendChild(row);
+    });
+}
+
+/**
+ * Показ / скрытие индикаторов конца списка
+ */
+function showEndIndicator() {
+    const end = document.getElementById('users-end-indicator');
+    if (end) end.classList.remove('hidden');
+}
+
+function hideEndIndicator() {
+    const end = document.getElementById('users-end-indicator');
+    if (end) end.classList.add('hidden');
 }
 
 /**
@@ -129,7 +328,7 @@ function removeUserRow(userId) {
  * Обновление статистики пользователей
  */
 function updateStatistics() {
-    const rows = document.querySelectorAll('tbody tr');
+    const rows = document.querySelectorAll('#users-table-body tr');
     const totalUsers = rows.length;
     const adminUsers = Array.from(rows).filter(row => 
         row.querySelector('.user-role')?.textContent.toLowerCase() === 'admin'
@@ -140,6 +339,51 @@ function updateStatistics() {
     animateCounter(document.querySelector('.stat-total'), totalUsers);
     animateCounter(document.querySelector('.stat-admins'), adminUsers);
     animateCounter(document.querySelector('.stat-users'), regularUsers);
+}
+
+/**
+ * Вспомогательная функция: безопасный HTML
+ */
+function escapeHtml(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+/**
+ * Вспомогательная функция: экранирование для вставки в JS-строку
+ */
+function escapeJs(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"');
+}
+
+/**
+ * Форматирование даты/времени
+ */
+function formatDateTime(value) {
+    if (!value) return '';
+    try {
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) {
+            return value;
+        }
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+    } catch (e) {
+        return value;
+    }
 }
 
 /**
