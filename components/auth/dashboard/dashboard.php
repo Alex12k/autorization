@@ -252,9 +252,9 @@ function dashboard(): void
                                 Демонстрации
                             </h3>
                             <div class="space-y-3">
-                                <button type="button" class="open_modal_database_demo w-full bg-gradient-to-r from-indigo-500 to-indigo-600 text-white py-3 px-4 rounded-lg hover:from-indigo-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105 shadow-md cursor-pointer">
-                                    <i class="ri-database-2-line mr-2"></i>
-                                    PostgreSQL
+                                <button type="button" class="open_modal_seed_users w-full bg-gradient-to-r from-green-500 to-teal-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-teal-700 transition-all duration-300 transform hover:scale-105 shadow-md cursor-pointer">
+                                    <i class="ri-user-add-line mr-2"></i>
+                                    Генерация пользователей
                                 </button>
                                 <button type="button" class="open_modal_php_demo w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 px-4 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-300 transform hover:scale-105 shadow-md cursor-pointer">
                                     <i class="ri-code-s-slash-line mr-2"></i>
