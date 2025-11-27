@@ -21,7 +21,28 @@ function modal_seed_users(): void
 {
     // Проверка прав доступа (только для админов)
     if (!isAuthenticated() || !hasRole('admin')) {
-        echo '<div class="box-modal"><div class="p-6 text-center"><p class="text-red-600">Доступ запрещен. Требуются права администратора.</p></div></div>';
+        ?>
+        <div class="box-modal seed-users-modal">
+            <!-- Заголовок модального окна -->
+            <div class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
+                        <i class="ri-error-warning-line text-2xl text-white"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-gray-900">Доступ запрещен</h2>
+                        <p class="text-sm text-gray-500">Требуются права администратора</p>
+                    </div>
+                </div>
+                <button class="arcticmodal-close text-gray-400 hover:text-gray-600 transition-colors duration-200 p-2 hover:bg-gray-100 rounded-full">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <div class="p-6 text-center">
+                <p class="text-red-600">Доступ запрещен. Требуются права администратора.</p>
+            </div>
+        </div>
+        <?php
         return;
     }
     

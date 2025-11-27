@@ -240,7 +240,7 @@ function admin(): void
              style="display: none;"></div>
 
         <!-- Toast уведомления -->
-        <div id="toast-container" class="fixed top-4 right-4 z-50 space-y-2"></div>
+        <div id="toast-container" class="fixed top-4 right-4 space-y-2" style="z-index: 9999;"></div>
 
         <!-- Модальное окно редактирования пользователя -->
         <div id="editModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">

@@ -16,10 +16,24 @@ function dashboard(): void
     $login_time = $_SESSION['login_time'] ?? time();
     $session_duration = time() - $login_time;
 
-    // Подключаем header
+    // Подключаем header (уже подключен в auth.php, но проверяем на всякий случай)
     if (!function_exists('renderHeader')) {
-        require_once __DIR__ . '/../../header.php';
+        $headerPath = __DIR__ . '/../../header.php';
+        if (file_exists($headerPath)) {
+            require_once $headerPath;
+        } else {
+            // Альтернативный путь
+            $headerPath = dirname(dirname(__DIR__)) . '/header.php';
+            if (file_exists($headerPath)) {
+                require_once $headerPath;
+            }
+        }
     }
+    
+    if (!function_exists('renderHeader')) {
+        die('Ошибка: функция renderHeader не найдена. Проверьте подключение components/header.php');
+    }
+    
     renderHeader('Панель управления', 'ri-dashboard-line');
 
     ?>

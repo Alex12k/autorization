@@ -14,7 +14,8 @@ function showToast(message, type = 'success') {
     if (!container) {
         container = document.createElement('div');
         container.id = 'toast-container';
-        container.className = 'fixed top-4 right-4 z-50 space-y-2';
+        container.className = 'fixed top-4 right-4 space-y-2';
+        container.style.zIndex = '9999'; // Выше модального окна (z-index: 1000)
         document.body.appendChild(container);
     }
 

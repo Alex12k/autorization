@@ -13,3 +13,90 @@
 	transform: translateY(-2px);
 	box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
 }
+
+/* Плавное 3D‑переворачивание логотипа заказчика на главной */
+.flip-img {
+	animation: flip 3s infinite linear;
+	transform-style: preserve-3d;
+}
+
+@keyframes flip {
+	from {
+		transform: rotateY(0deg);
+	}
+	to {
+		transform: rotateY(360deg);
+	}
+}
+
+/* Современные эффекты для презентации */
+@keyframes float {
+	0%, 100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-20px);
+	}
+}
+
+@keyframes gradient-shift {
+	0%, 100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+}
+
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-float {
+	animation: float 6s ease-in-out infinite;
+}
+
+.animate-gradient {
+	background-size: 200% 200%;
+	animation: gradient-shift 8s ease infinite;
+}
+
+.animate-fade-in-up {
+	opacity: 0;
+	transform: translateY(30px);
+	animation: fade-in-up 0.6s ease-out forwards;
+	will-change: opacity, transform;
+}
+
+.glass-effect {
+	background: rgba(255, 255, 255, 0.7);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glow-effect {
+	box-shadow: 0 0 20px rgba(59, 130, 246, 0.3), 0 0 40px rgba(147, 51, 234, 0.2);
+}
+
+.hover-glow:hover {
+	box-shadow: 0 0 30px rgba(59, 130, 246, 0.5), 0 0 60px rgba(147, 51, 234, 0.3);
+	transition: box-shadow 0.3s ease;
+}
+
+/* Темная тема для презентации */
+html.dark .glass-effect {
+	background: rgba(31, 41, 55, 0.7);
+	border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+html.dark .glass-effect.dark\:bg-gray-800\/70 {
+	background: rgba(31, 41, 55, 0.7);
+}

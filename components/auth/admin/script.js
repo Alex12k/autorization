@@ -25,13 +25,16 @@ let currentFilters = {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', function() {
-    // Получаем данные из data-атрибутов
+    // Если на странице нет данных админки — выходим и не инициализируем модуль
     const adminData = document.getElementById('admin-data');
-    if (adminData) {
-        currentUserId = parseInt(adminData.dataset.userId) || 0;
-        currentUserRole = adminData.dataset.userRole || '';
-        csrfToken = adminData.dataset.csrfToken || '';
+    if (!adminData) {
+        return;
     }
+
+    // Получаем данные из data-атрибутов
+    currentUserId = parseInt(adminData.dataset.userId) || 0;
+    currentUserRole = adminData.dataset.userRole || '';
+    csrfToken = adminData.dataset.csrfToken || '';
 
     // Инициализация фильтров и ленивой подгрузки
     initUsersFilters();

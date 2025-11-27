@@ -80,6 +80,4 @@ function async_window(){?>
         </div>
     </div>
 
-<?}?>
-
-
+<?php }
